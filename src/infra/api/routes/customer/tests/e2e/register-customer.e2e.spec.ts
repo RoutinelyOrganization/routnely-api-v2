@@ -58,9 +58,9 @@ describe('RegisterCustomer E2E', () => {
       acceptedTerms: true,
     });
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(409);
     expect(response.body).toEqual({
-      errors: ['O email informado já existe'],
+      errors: ['Este(a) email já esta cadastrado(a)'],
     });
   });
 });

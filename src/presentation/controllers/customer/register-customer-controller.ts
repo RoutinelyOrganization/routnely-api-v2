@@ -1,6 +1,6 @@
 import type { RegisterCustomerContractDomain } from '@/domain/contracts';
 import type { ControllerContractPresentation, ValidationContract } from '@/presentation/contracts';
-import { ControllerError } from '@/presentation/contracts';
+import { ControllerError } from '@/presentation/controllers/controller-class-error';
 import { noContent } from '@/presentation/helpers/http-helpers';
 import type { ControllerRequestType, ControllerResponseType } from '@/presentation/types';
 

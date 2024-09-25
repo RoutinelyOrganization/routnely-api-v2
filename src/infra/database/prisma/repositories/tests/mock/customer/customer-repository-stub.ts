@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { right, type Either } from '@/shared/either';
 import type {
   CustomerRepositoryContractsUsecase,
   CustomerRepositoryDto,
@@ -15,15 +14,14 @@ const dataCustomerRepo: CustomerRepositoryDto = {
 
 const stubCustomerRepository = (): CustomerRepositoryContractsUsecase => {
   class CustomerRepositoryStub implements CustomerRepositoryContractsUsecase {
-    async create(customer: CustomerRepositoryDto): Promise<Either<Error, void>> {
-      return right();
-    }
-    async findByField<K extends keyof CustomerRepositoryDto>(
+    async findFieldOrNull<K extends keyof CustomerRepositoryDto>(
       field: K,
       value: CustomerRepositoryDto[K],
-    ): Promise<Either<Error, CustomerRepositoryDto | null>> {
-      if (dataCustomerRepo[field] !== value) return right(null);
-      return right(dataCustomerRepo);
+    ): Promise<CustomerRepositoryDto | null> {
+      return null;
+    }
+    async create(customer: CustomerRepositoryDto): Promise<void> {
+      return;
     }
   }
   return new CustomerRepositoryStub();

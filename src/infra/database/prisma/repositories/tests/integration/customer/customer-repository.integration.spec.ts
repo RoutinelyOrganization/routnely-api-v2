@@ -18,21 +18,21 @@ describe('customer-repository unit test', () => {
   it('Should return void in create method', async () => {
     const result = await customerRepository.create(data);
 
-    expect(result.value).toBeUndefined();
+    expect(result).toBeUndefined();
 
-    const custumerCreated = await customerRepository.findByField('id', data.id);
-    expect(custumerCreated.value).toEqual(data);
+    const custumerCreated = await customerRepository.findFieldOrNull('id', data.id);
+    expect(custumerCreated).toEqual(data);
   });
 
   it('Should return correct data  if customer exists in findByField method', async () => {
-    const result = await customerRepository.findByField('id', data.id);
+    const result = await customerRepository.findFieldOrNull('id', data.id);
 
-    expect(result.value).toEqual(data);
+    expect(result).toEqual(data);
   });
 
   it('Should return null if customer not exists in findByField method', async () => {
-    const result = await customerRepository.findByField('id', '2');
+    const result = await customerRepository.findFieldOrNull('id', '2');
 
-    expect(result.value).toBeNull();
+    expect(result).toBeNull();
   });
 });

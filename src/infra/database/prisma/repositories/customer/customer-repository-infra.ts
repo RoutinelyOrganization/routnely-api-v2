@@ -1,5 +1,4 @@
 import { PrismaHelper } from '@/infra/database/prisma/helpers/prisma-helper';
-import { right, type Either } from '@/shared/either';
 import type {
   CustomerRepositoryContractsUsecase,
   CustomerRepositoryDto,
@@ -11,10 +10,10 @@ export class CustomerRepository implements CustomerRepositoryContractsUsecase {
     return await PrismaHelper.getPrisma();
   }
 
-  async findByField<K extends keyof CustomerRepositoryDto>(
+  async findFieldOrNull<K extends keyof CustomerRepositoryDto>(
     field: K,
     value: CustomerRepositoryDto[K],
-  ): Promise<Either<Error, CustomerRepositoryDto | null>> {
+  ): Promise<CustomerRepositoryDto | null> {
     const prisma = await this.client();
     const customer = await prisma.customer.findFirst({
       where: {
@@ -43,9 +42,9 @@ export class CustomerRepository implements CustomerRepositoryContractsUsecase {
           acceptedTerms: customer.account.acceptedAt !== null,
         };
 
-    return right(customerDtoOrNull);
+    return customerDtoOrNull;
   }
-  async create(entity: CustomerRepositoryDto): Promise<Either<Error, void>> {
+  async create(entity: CustomerRepositoryDto): Promise<void> {
     const prisma = await this.client();
     await prisma.customer.create({
       data: {
@@ -59,6 +58,6 @@ export class CustomerRepository implements CustomerRepositoryContractsUsecase {
         },
       },
     });
-    return right();
+    return;
   }
 }

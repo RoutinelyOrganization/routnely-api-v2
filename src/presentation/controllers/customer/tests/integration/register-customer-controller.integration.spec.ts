@@ -110,7 +110,7 @@ describe('RegisterCustomerController Integration test', () => {
     });
     const output = await sut.handle({ body });
 
-    expect(output.body).toEqual({ errors: ['O email informado já existe'] });
+    expect(output.body).toEqual({ errors: ['Este(a) email já esta cadastrado(a)'] });
   });
 
   it('Should return server error', async () => {

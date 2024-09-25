@@ -1,5 +1,6 @@
 import { makeCryptography, makeCustomerRepository } from '@/factories';
 import { PrismaHelper } from '@/infra/database/prisma/helpers';
+import { CustomError } from '@/shared/errors/custom-error';
 import { RegisterCustomerUsecase } from '@/usecases/implementations/customer/register/register-customer-usecase';
 import { data } from '@/usecases/implementations/customer/tests/mocks/stubs-register-custumer';
 
@@ -22,18 +23,23 @@ const sut = new RegisterCustomerUsecase(repository, criptography);
 
 describe('Register Customer Usecase Integration', () => {
   it('Should return domain errors ', async () => {
-    const output = await sut.perform({
-      ...data,
-      acceptedTerms: false,
-      name: 'customer *',
-    });
-
-    expect(output.value).toEqual({
-      errors: [
-        'O nome deve ter pelo menos 3 caracteres e apenas letras',
-        'Os termos de uso devem ser aceitos',
-      ],
-    });
+    try {
+      await sut.perform({
+        ...data,
+        acceptedTerms: false,
+        name: 'customer *',
+      });
+    } catch (error) {
+      expect(error).toBeInstanceOf(CustomError);
+      const customError = error as CustomError;
+      expect(customError.formatErrors).toStrictEqual({
+        codeError: 400,
+        messages: [
+          'O nome deve ter pelo menos 3 caracteres e apenas letras',
+          'Os termos de uso devem ser aceitos',
+        ],
+      });
+    }
   });
 
   it('should return error if email exists', async () => {
@@ -47,11 +53,15 @@ describe('Register Customer Usecase Integration', () => {
       },
     });
 
-    const output = await sut.perform(data);
-
-    expect(output.value).toEqual({
-      errors: ['O email informado já existe'],
-    });
+    try {
+      await sut.perform(data);
+    } catch (error) {
+      const customError = error as CustomError;
+      expect(customError.formatErrors).toStrictEqual({
+        codeError: 409,
+        messages: ['Este(a) email já esta cadastrado(a)'],
+      });
+    }
   });
 
   it('Should call repository create with correct values', async () => {
@@ -67,6 +77,6 @@ describe('Register Customer Usecase Integration', () => {
 
   it('should return customer on success', async () => {
     const output = await sut.perform(data);
-    expect(output.value).toBeUndefined();
+    expect(output).toBeUndefined();
   });
 });
