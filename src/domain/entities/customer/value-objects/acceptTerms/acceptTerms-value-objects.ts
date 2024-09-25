@@ -1,23 +1,23 @@
 import { AcceptedTermsError } from '@/domain/entities/customer/errors';
+import type { ResultValueObject } from '@/domain/entities/value-object';
 import { ValueObject } from '@/domain/entities/value-object';
-import type { Either } from '@/shared/either';
-import { left, right } from '@/shared/either';
+import { CustomError } from '@/shared/errors/custom-error';
 
 export class AcceptTermsValueObject extends ValueObject<boolean> {
   private constructor(acceptTerms: boolean) {
     super(acceptTerms);
   }
 
-  static create(acceptTerms: boolean): Either<AcceptedTermsError[], AcceptTermsValueObject> {
+  static create(acceptTerms: boolean): ResultValueObject {
     this.clearErrors();
+
     if (!acceptTerms) {
       this.addError(new AcceptedTermsError());
     }
 
     const errors = this.errors();
-    if (errors) {
-      return left(errors);
-    }
-    return right(new AcceptTermsValueObject(acceptTerms));
+    return errors
+      ? { isvalid: false, result: new CustomError(errors) }
+      : { isvalid: true, result: new AcceptTermsValueObject(acceptTerms) };
   }
 }
