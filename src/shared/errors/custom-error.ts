@@ -33,10 +33,14 @@ export class CustomError {
     this.props = Array.isArray(errors) ? errors : [errors];
   }
 
-  get errors(): OutputObjError {
+  get formatErrors(): OutputObjError {
     return {
       codeError: this.props[0].codeError,
       messages: this.props.map(error => error.message),
     };
+  }
+
+  get errors(): CustomErrorAbstract[] {
+    return this.props;
   }
 }
