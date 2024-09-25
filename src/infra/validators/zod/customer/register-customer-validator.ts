@@ -1,10 +1,9 @@
 import { ZodHelper } from '@/infra/validators/helper/zod-helper-infra';
 import type { ValidationContract } from '@/presentation/contracts';
-import type { Either } from '@/shared/either';
 import { z } from 'zod';
 
 export class RegisterCustomerValidator implements ValidationContract {
-  validate(input: any): Either<Error, void> {
+  validate(input: any): void {
     const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%&*=])[a-zA-Z\d!@#$%&*=]{6,}$/;
     const messageErrorRegexPassword =
       'deve conter pelo menos uma letra maiúscula, uma letra minúscula, um caractere especial, um número e ter no mínimo 6 caracteres';

@@ -1,6 +1,6 @@
 import type {
   CreateRepositoryContract,
-  FindByFieldRepositoryContract,
+  FindFieldOrNullRepositoryContract,
 } from '@/usecases/contracts/database/repository-contracts-usecase';
 
 export type CustomerRepositoryDto = {
@@ -12,5 +12,5 @@ export type CustomerRepositoryDto = {
 };
 
 export interface CustomerRepositoryContractsUsecase
-  extends FindByFieldRepositoryContract<CustomerRepositoryDto>,
+  extends FindFieldOrNullRepositoryContract<CustomerRepositoryDto>,
     CreateRepositoryContract<CustomerRepositoryDto> {}

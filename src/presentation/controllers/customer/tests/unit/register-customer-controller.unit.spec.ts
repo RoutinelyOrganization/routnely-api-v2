@@ -1,15 +1,18 @@
+import { InvalidFieldError } from '@/domain/errors';
 import { serverError } from '@/presentation/helpers/http-helpers';
-import { left, right } from '@/shared/either';
+import { CustomError } from '@/shared/errors/custom-error';
 import { makeSutController } from '../mock/stubs-register-controller';
 
 describe('RegisterCustomerController unit test', () => {
   it('Should return error in validator', async () => {
     const { sut, validator } = makeSutController();
-    jest.spyOn(validator, 'validate').mockReturnValueOnce(left(new Error('any_message')));
+    jest.spyOn(validator, 'validate').mockImplementationOnce(() => {
+      throw new Error();
+    });
 
     const output = await sut.handle({});
 
-    expect(output.body).toEqual({ errors: ['any_message'] });
+    expect(output.statusCode).toBe(500);
   });
 
   it('Should call validator with correct values', async () => {
@@ -21,11 +24,14 @@ describe('RegisterCustomerController unit test', () => {
 
   it('Should return error in usecase', async () => {
     const { sut, usecase } = makeSutController();
-    jest.spyOn(usecase, 'perform').mockResolvedValueOnce(left(new Error('any_error')));
+    jest.spyOn(usecase, 'perform').mockImplementationOnce(() => {
+      throw new CustomError(new InvalidFieldError('any_field'));
+    });
 
     const output = await sut.handle({});
 
-    expect(output.body).toEqual({ errors: ['any_error'] });
+    expect(output.statusCode).toBe(400);
+    expect(output.body).toEqual({ errors: ['O campo any_field está inválido'] });
   });
 
   it('Should call usecase with correct values', async () => {
@@ -38,7 +44,7 @@ describe('RegisterCustomerController unit test', () => {
   it('Should return ok in usecase', async () => {
     const { sut, usecase } = makeSutController();
 
-    jest.spyOn(usecase, 'perform').mockResolvedValueOnce(right());
+    jest.spyOn(usecase, 'perform').mockResolvedValueOnce();
     const output = await sut.handle({});
 
     expect(output.statusCode).toBe(204);

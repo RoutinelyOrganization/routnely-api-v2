@@ -1,9 +1,7 @@
-import type {
-  RegisterCustomerContractDomain,
-  RegisterCustomerResponseType,
-} from '@/domain/contracts';
+import type { OutputCustomerDto, RegisterCustomerContractDomain } from '@/domain/contracts';
 import { CustomerEntity } from '@/domain/entities/customer/customer-entity';
-import { left, right } from '@/shared/either';
+import { ConflitError } from '@/shared/errors/conflit-error';
+import { CustomError } from '@/shared/errors/custom-error';
 import type { CriptographyContractUsecase } from '@/usecases/contracts/cryptography/cryptography-contract-usecase.ts';
 import type {
   CustomerRepositoryContractsUsecase,
@@ -16,31 +14,27 @@ export class RegisterCustomerUsecase implements RegisterCustomerContractDomain {
     private repository: CustomerRepositoryContractsUsecase,
     private cryptography: CriptographyContractUsecase,
   ) {}
-  async perform(data: InputRegisterCustomerDto): RegisterCustomerResponseType {
+  async perform(data: InputRegisterCustomerDto): OutputCustomerDto {
     const entity = CustomerEntity.create({ ...data });
 
-    if (entity.isLeft()) {
-      return left(entity.value);
-    }
+    const existsEmail = await this.repository.findFieldOrNull('email', data.email);
 
-    const existsEmail = await this.repository.findByField('email', data.email);
-
-    if (existsEmail.isRight() && existsEmail.value) {
-      return left({ errors: ['O email informado já existe'] });
+    if (existsEmail) {
+      throw new CustomError(new ConflitError('email'));
     }
 
     const passwordHashed = await this.cryptography.encrypter(data.password);
 
     const newCustomer: CustomerRepositoryDto = {
-      id: entity.value.id,
-      name: entity.value.name,
-      email: entity.value.email,
-      acceptedTerms: entity.value.acceptedTerms,
+      id: entity.id,
+      name: entity.name,
+      email: entity.email,
+      acceptedTerms: entity.acceptedTerms,
       password: passwordHashed,
     };
 
     await this.repository.create(newCustomer);
 
-    return right();
+    return;
   }
 }

@@ -1,5 +1,6 @@
 import { type ZodHelperData } from '@/infra/validators/';
-import { left, right, type Either } from '@/shared/either';
+import { ValidatorError } from '@/infra/validators/errors/validator-error';
+import { CustomError } from '@/shared/errors/custom-error';
 import { ZodError } from 'zod';
 
 type ZodObjectError = {
@@ -13,21 +14,20 @@ type ZodObjectError = {
 };
 
 export class ZodHelper {
-  static check(data: ZodHelperData): Either<Error, void> {
+  static check(data: ZodHelperData): void {
     try {
       data.schema.parse(data.value);
-      return right();
+      return;
     } catch (error: any) {
       if (error instanceof ZodError) {
         const { message } = error;
         const parseMessage = JSON.parse(message) as Array<ZodObjectError>;
-        const errorsFormated = parseMessage.map(err => `${err.path[0]}: ${err.message}`);
 
-        return left({
-          errors: errorsFormated,
-        });
+        throw new CustomError(
+          parseMessage.map(err => new ValidatorError(`${err.path[0]}: ${err.message}`)),
+        );
       }
-      return left(error);
+      throw new Error('Internal server error');
     }
   }
 }

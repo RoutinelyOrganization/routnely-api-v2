@@ -13,7 +13,10 @@ beforeEach(async () => {
   });
 });
 
+// factory que instancia a classe criptography
 const criptography = makeCryptography();
+
+// factory que instancia a classe CustomerRepository
 const repository = makeCustomerRepository();
 const sut = new RegisterCustomerUsecase(repository, criptography);
 

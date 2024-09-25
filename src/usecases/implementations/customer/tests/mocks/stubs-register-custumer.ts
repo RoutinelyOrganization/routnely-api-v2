@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { right, type Either } from '@/shared/either';
 import type { CriptographyContractUsecase } from '@/usecases/contracts/cryptography/cryptography-contract-usecase.ts';
 import type {
   CustomerRepositoryContractsUsecase,
@@ -17,14 +16,14 @@ export const data: InputRegisterCustomerDto = {
 
 export const repositoryStub = (): CustomerRepositoryContractsUsecase => {
   class CustomerRepository implements CustomerRepositoryContractsUsecase {
-    async findByField<K extends keyof CustomerRepositoryDto>(
+    async findFieldOrNull<K extends keyof CustomerRepositoryDto>(
       field: K,
       value: CustomerRepositoryDto[K],
-    ): Promise<Either<Error, CustomerRepositoryDto | null>> {
-      return right(null);
+    ): Promise<CustomerRepositoryDto | null> {
+      return null;
     }
-    async create(entity: CustomerRepositoryDto): Promise<Either<Error, void>> {
-      return right();
+    async create(entity: CustomerRepositoryDto): Promise<void> {
+      return;
     }
   }
 

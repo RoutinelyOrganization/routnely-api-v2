@@ -32,6 +32,11 @@ export const notFound = (error: ObjectErrorType): ControllerResponseType => ({
   body: error,
 });
 
+export const conflict = (error: ObjectErrorType): ControllerResponseType => ({
+  statusCode: 409,
+  body: error,
+});
+
 export const serverError = (error: Error): ControllerResponseType => ({
   statusCode: 500,
   body: new ServerError(error.stack),

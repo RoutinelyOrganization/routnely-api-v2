@@ -7,7 +7,7 @@ beforeEach(async () => {
 });
 
 describe('RegisterCustomer E2E', () => {
-  it('Should return status-code 204 and body undefined on success', async () => {
+  it('Should return status-code 204 and no body on success', async () => {
     const request = await testeServer();
     const response = await request.post('/user').send({
       name: 'John Doe',
@@ -21,7 +21,7 @@ describe('RegisterCustomer E2E', () => {
     expect(response.body).toEqual({});
   });
 
-  it('Should return status-code 400 and body undefined on error', async () => {
+  it('Should return status-code 400 and body with errors description', async () => {
     const request = await testeServer();
     const response = await request.post('/user').send({
       name: 'John Doe',
