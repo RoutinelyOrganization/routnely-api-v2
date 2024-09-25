@@ -1,3 +1,4 @@
+import { CustomError } from '@/shared/errors/custom-error';
 import { CustomerEntity } from './customer-entity';
 
 const dataCustomer = {
@@ -9,10 +10,10 @@ const dataCustomer = {
 describe('Customer Entity', () => {
   it('Should correct instance of Customer', () => {
     const customer = CustomerEntity.create(dataCustomer);
-    expect(customer.isRight()).toBeTruthy();
-    expect(customer.value).toBeInstanceOf(CustomerEntity);
 
-    const { id, name, email, acceptedTerms } = customer.value as CustomerEntity;
+    expect(customer).toBeInstanceOf(CustomerEntity);
+
+    const { id, name, email, acceptedTerms } = customer;
 
     expect(id).toBeTruthy();
     expect(name).toEqual(dataCustomer.name);
@@ -22,18 +23,23 @@ describe('Customer Entity', () => {
   });
 
   it('Should return all errors', () => {
-    const customer = CustomerEntity.create({ id: 'dffmdpbmpmf' } as any);
+    try {
+      CustomerEntity.create({ id: 'any_id' } as any);
+    } catch (error) {
+      expect(error).toBeInstanceOf(CustomError);
 
-    expect(customer.isLeft()).toBeTruthy();
-    expect(customer.value).toEqual({
-      errors: [
-        'O campo id está inválido',
-        'O campo nome é obrigatório',
-        'O nome deve ter pelo menos 3 caracteres e apenas letras',
-        'O campo Email é obrigatório',
-        'O campo Email está inválido',
-        'Os termos de uso devem ser aceitos',
-      ],
-    });
+      const _errors = error as CustomError;
+      expect(_errors.formatErrors).toStrictEqual({
+        codeError: 400,
+        messages: [
+          'O campo id está inválido',
+          'O campo nome é obrigatório',
+          'O nome deve ter pelo menos 3 caracteres e apenas letras',
+          'O campo Email é obrigatório',
+          'O campo Email está inválido',
+          'Os termos de uso devem ser aceitos',
+        ],
+      });
+    }
   });
 });
