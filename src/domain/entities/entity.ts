@@ -1,11 +1,16 @@
 import { UuidAdapter } from '@/infra/id/uuid-adapter/uuid-adapter';
-import type { Either } from '@/shared/either';
-import { left, right } from '@/shared/either';
-import { InvalidFieldError } from '../shared/errors';
+import type { CustomErrorAbstract } from '@/shared/errors/custom-error';
+import { CustomError } from '@/shared/errors/custom-error';
+import { InvalidFieldError } from '../errors';
+
+export type ResultValueId =
+  | { isvalid: true; result: string }
+  | { isvalid: false; result: CustomError };
 
 type Props = { id: string } & Record<string, any>;
+
 export abstract class Entity<T extends Props> {
-  private static _errors: Error[] = [];
+  private static _errors: CustomErrorAbstract[] = [];
   protected readonly _id: string;
 
   protected constructor(protected readonly props: T) {
@@ -16,22 +21,25 @@ export abstract class Entity<T extends Props> {
     return this._id;
   }
 
-  protected static validateId(id?: string): Either<InvalidFieldError, string> {
+  protected static validateId(id?: string): ResultValueId {
     const uuid = new UuidAdapter();
 
     if (id && !uuid.validate(id)) {
-      return left(new InvalidFieldError('id'));
+      return {
+        isvalid: false,
+        result: new CustomError(new InvalidFieldError('id')),
+      };
     }
 
     const returnId = id ?? uuid.build();
-    return right(returnId);
+    return { isvalid: true, result: returnId };
   }
 
-  protected static errors(): Error[] | null {
+  protected static errors(): CustomErrorAbstract[] | null {
     return this._errors.length ? this._errors : null;
   }
 
-  protected static addError(error: Error | Error[]): void {
+  protected static addError(error: CustomErrorAbstract | CustomErrorAbstract[]): void {
     if (Array.isArray(error)) {
       this._errors = this._errors.concat(error);
       return;
@@ -39,15 +47,7 @@ export abstract class Entity<T extends Props> {
     this._errors.push(error);
   }
 
-  protected static addObjectError({ errors }: { errors: string[] }): void {
-    errors.forEach(error => this.addError(new Error(error)));
-  }
-
   protected static clearErrors(): void {
     this._errors = [];
-  }
-
-  protected static formatErrors(): string[] {
-    return this._errors.map(error => error.message);
   }
 }

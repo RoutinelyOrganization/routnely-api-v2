@@ -1,4 +1,4 @@
-import { FieldIsRequiredError, InvalidFieldError } from '@/domain/shared/errors';
+import { FieldIsRequiredError, InvalidFieldError } from '@/domain/errors';
 import { EmailValueObject } from './email-value-objects';
 
 describe('Email Value Object', () => {

@@ -1,5 +1,5 @@
 import { InvalidNameError } from '@/domain/entities/customer/errors';
-import { FieldIsRequiredError } from '@/domain/shared/errors';
+import { FieldIsRequiredError } from '@/domain/errors';
 import { NameValueObject } from './name-value-object';
 
 describe('Name Value Object', () => {
