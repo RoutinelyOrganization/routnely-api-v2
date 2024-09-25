@@ -1,8 +1,8 @@
 import { DateIsInThePastError, InvalidDateError } from '@/domain/entities/activity/errors';
+import type { ResultValueObject } from '@/domain/entities/value-object';
 import { ValueObject } from '@/domain/entities/value-object';
-import { FieldIsRequiredError } from '@/domain/shared/errors';
-import type { Either } from '@/shared/either';
-import { left, right } from '@/shared/either';
+import { FieldIsRequiredError } from '@/domain/errors';
+import { CustomError } from '@/shared/errors/custom-error';
 
 export type DatetimeErrorType = FieldIsRequiredError | InvalidDateError | DateIsInThePastError;
 
@@ -12,16 +12,16 @@ export class DatetimeValueObject extends ValueObject<Date> {
     Object.freeze(this);
   }
 
-  static create(value: Date): Either<DatetimeErrorType[], DatetimeValueObject> {
-    const errors = this.validate(value);
-    if (errors) {
-      return left(errors);
-    }
+  static create(value: Date): ResultValueObject {
+    this.validate(value);
+    const errors = this.errors();
 
-    return right(new DatetimeValueObject(value));
+    return errors
+      ? { isvalid: false, result: new CustomError(errors) }
+      : { isvalid: true, result: new DatetimeValueObject(value) };
   }
 
-  private static validate(value: Date): DatetimeErrorType[] | null {
+  private static validate(value: Date): void {
     this.clearErrors();
     if (!this.hasDatetime(value)) {
       this.addError(new FieldIsRequiredError('Data e hora'));
@@ -32,7 +32,6 @@ export class DatetimeValueObject extends ValueObject<Date> {
     if (value && !this.isDateInTheFuture(value)) {
       this.addError(new DateIsInThePastError());
     }
-    return this.errors();
   }
 
   private static hasDatetime(value: Date): boolean {

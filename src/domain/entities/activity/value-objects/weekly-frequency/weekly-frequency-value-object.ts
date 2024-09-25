@@ -1,27 +1,15 @@
 import type { WeeklyFrequencyModel } from '@/domain/entities/activity/types';
 import { WeekDaysEnumType } from '@/domain/entities/activity/types';
-import type { DatetimeErrorType } from '@/domain/entities/activity/value-objects/datetime/datetime-value-object';
 import { DatetimeValueObject } from '@/domain/entities/activity/value-objects/datetime/datetime-value-object';
+import type { ResultValueObject } from '@/domain/entities/value-object';
 import { ValueObject } from '@/domain/entities/value-object';
 import {
   InvalidArrayInstanceError,
   InvalidFieldPositiveNumberError,
   InvalidFieldsValuesError,
-} from '@/domain/shared/errors';
-import type { Either } from '@/shared/either';
-import { left, right } from '@/shared/either';
+} from '@/domain/errors';
+import { CustomError } from '@/shared/errors/custom-error';
 import { InvalidUniqueWeekdaysError } from '../../errors';
-
-type WeekDaysErrorsType =
-  | InvalidArrayInstanceError
-  | InvalidFieldsValuesError
-  | InvalidUniqueWeekdaysError;
-
-type WeeklyFrequencyErrorsType =
-  | InvalidFieldPositiveNumberError
-  | WeekDaysErrorsType
-  | DatetimeErrorType;
-type ResponseWeeklyFrequencyType = Either<WeeklyFrequencyErrorsType[], WeeklyFrequencyValueObject>;
 
 const keysWeekDays = Object.values(WeekDaysEnumType);
 
@@ -31,16 +19,16 @@ export class WeeklyFrequencyValueObject extends ValueObject<WeeklyFrequencyModel
     Object.freeze(this);
   }
 
-  static create(props: WeeklyFrequencyModel): ResponseWeeklyFrequencyType {
-    const errors = this.validate(props);
-    if (errors) {
-      return left(errors);
-    }
+  static create(props: WeeklyFrequencyModel): ResultValueObject {
+    this.validate(props);
+    const errors = this.errors();
 
-    return right(new WeeklyFrequencyValueObject(props));
+    return errors
+      ? { isvalid: false, result: new CustomError(errors) }
+      : { isvalid: true, result: new WeeklyFrequencyValueObject(props) };
   }
 
-  private static validate(props: WeeklyFrequencyModel): WeeklyFrequencyErrorsType[] | null {
+  private static validate(props: WeeklyFrequencyModel): void {
     this.clearErrors();
 
     const { weekDays, quantityPerWeek, finallyDate } = props;
@@ -54,11 +42,11 @@ export class WeeklyFrequencyValueObject extends ValueObject<WeeklyFrequencyModel
     }
 
     const finallyDateOrUndefined = finallyDate && DatetimeValueObject.create(finallyDate);
-    if (finallyDateOrUndefined?.isLeft()) {
-      this.addObjectError(finallyDateOrUndefined.value);
+    if (!finallyDateOrUndefined?.isvalid) {
+      finallyDateOrUndefined?.result.errors?.forEach(error => {
+        this.addError(error);
+      });
     }
-
-    return this.errors();
   }
 
   private static quantityPerWeekIsValidNumber(quantityPerWeek?: number): boolean {
@@ -68,7 +56,7 @@ export class WeeklyFrequencyValueObject extends ValueObject<WeeklyFrequencyModel
     return true;
   }
 
-  private static validWeekDays(weekDays?: WeekDaysEnumType[]): WeekDaysErrorsType[] | null {
+  private static validWeekDays(weekDays?: WeekDaysEnumType[]): void {
     if (weekDays) {
       if (!this.isInstanceOfArray(weekDays)) {
         this.addError(new InvalidArrayInstanceError());
@@ -82,8 +70,6 @@ export class WeeklyFrequencyValueObject extends ValueObject<WeeklyFrequencyModel
         this.addError(new InvalidUniqueWeekdaysError());
       }
     }
-
-    return this.errors();
   }
 
   private static isInstanceOfArray(value: any[]): boolean {

@@ -1,5 +1,7 @@
-export class InvalidDateError extends Error {
+import { CustomErrorAbstract } from '@/shared/errors/custom-error';
+
+export class InvalidDateError extends CustomErrorAbstract {
   constructor() {
-    super('Este campo deve ser uma data válida');
+    super({ codeError: 400, message: 'Este campo deve ser uma data válida' });
   }
 }
