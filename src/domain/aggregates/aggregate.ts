@@ -14,7 +14,7 @@ type EntityClass<T extends Entity<any>> = {
   create(props: any): T;
 };
 
-export abstract class Aggregate<T extends Props> {
+export abstract class Aggregate<T extends Props = Props> {
   private static _errors: CustomErrorAbstract[] = [];
   protected readonly _id: string;
 

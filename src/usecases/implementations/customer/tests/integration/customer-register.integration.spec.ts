@@ -1,25 +1,22 @@
+import { CustomerAggregate } from '@/domain/aggregates/customer';
 import { makeCryptography, makeCustomerRepository } from '@/factories';
 import { PrismaHelper } from '@/infra/database/prisma/helpers';
 import { CustomError } from '@/shared/errors/custom-error';
-import { RegisterCustomerUsecase } from '@/usecases/implementations/customer/register/register-customer-usecase';
 import { data } from '@/usecases/implementations/customer/tests/mocks/stubs-register-custumer';
+import { RegisterCustomerUsecase } from '../../register/register-customer-usecase';
 
 const prismaClient = async () => await PrismaHelper.getPrisma();
 beforeEach(async () => {
   const prisma = await prismaClient();
-  await prisma.customer.deleteMany({
-    where: {
-      email: data.email,
-    },
-  });
+  await prisma.account.deleteMany();
 });
 
 // factory que instancia a classe criptography
-const criptography = makeCryptography();
 
 // factory que instancia a classe CustomerRepository
 const repository = makeCustomerRepository();
-const sut = new RegisterCustomerUsecase(repository, criptography);
+const sut = new RegisterCustomerUsecase(repository);
+const cripty = makeCryptography();
 
 describe('Register Customer Usecase Integration', () => {
   it('Should return domain errors ', async () => {
@@ -46,10 +43,16 @@ describe('Register Customer Usecase Integration', () => {
     const prisma = await prismaClient();
     await prisma.customer.create({
       data: {
-        id: '1',
         name: data.name,
-        email: data.email,
-        account: { create: { password: data.password } },
+        acceptedTerms: data.acceptedTerms,
+        account: {
+          create: {
+            email: data.email,
+            password: cripty.encrypter(data.password),
+            acceptedAt: null,
+            isVerified: false,
+          },
+        },
       },
     });
 
@@ -65,14 +68,9 @@ describe('Register Customer Usecase Integration', () => {
   });
 
   it('Should call repository create with correct values', async () => {
-    jest.spyOn(criptography, 'encrypter').mockResolvedValueOnce('passwordHashed');
     const spy = jest.spyOn(repository, 'create');
     await sut.perform(data);
-    expect(spy).toHaveBeenCalledWith({
-      ...data,
-      password: 'passwordHashed',
-      id: expect.any(String),
-    });
+    expect(spy).toHaveBeenCalledWith(expect.any(CustomerAggregate));
   });
 
   it('should return customer on success', async () => {

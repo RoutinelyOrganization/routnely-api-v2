@@ -1,4 +1,4 @@
-import { DateIsInThePastError, InvalidDateError } from '@/domain/entities/activity/errors';
+import { InvalidDateError } from '@/domain/entities/activity/errors';
 import { FieldIsRequiredError } from '@/domain/errors';
 import { DatetimeValueObject } from './datetime-value-object';
 
@@ -10,18 +10,6 @@ describe('Datetime Value Object', () => {
     expect(datetime.result).toEqual({
       props: [new FieldIsRequiredError('Data e hora'), new InvalidDateError()],
     });
-  });
-
-  it('Should error if invalid date', () => {
-    const datetime = DatetimeValueObject.create(now.toString() as any);
-    expect(datetime.result).toEqual({
-      props: [new InvalidDateError(), new DateIsInThePastError()],
-    });
-  });
-
-  it('Should return error if the date is in the past', () => {
-    const datetime = DatetimeValueObject.create(now);
-    expect(datetime.result).toEqual({ props: [new DateIsInThePastError()] });
   });
 
   it('Should correct datetime', () => {

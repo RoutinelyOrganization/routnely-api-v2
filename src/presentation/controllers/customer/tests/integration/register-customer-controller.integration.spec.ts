@@ -1,4 +1,4 @@
-import { makeRegisterCustomerUsecase } from '@/factories';
+import { makeCryptography, makeRegisterCustomerUsecase } from '@/factories';
 import { PrismaHelper } from '@/infra/database/prisma/helpers';
 import { RegisterCustomerValidator } from '@/infra/validators';
 import { RegisterCustomerController } from '@/presentation/controllers';
@@ -9,11 +9,7 @@ const prismaClient = async () => await PrismaHelper.getPrisma();
 
 beforeEach(async () => {
   const prisma = await prismaClient();
-  await prisma.customer.deleteMany({
-    where: {
-      email: data.email,
-    },
-  });
+  await prisma.account.deleteMany();
 });
 
 const body = { ...data, confirmPassword: data.password };
@@ -100,17 +96,29 @@ describe('RegisterCustomerController Integration test', () => {
 
   it('Should return error in usecase', async () => {
     const prisma = await prismaClient();
+    const cripty = makeCryptography();
 
     await prisma.customer.create({
       data: {
         name: data.name,
-        email: data.email,
-        account: { create: { password: data.password } },
+        acceptedTerms: true,
+        account: {
+          create: {
+            email: data.email,
+            password: cripty.encrypter(data.password),
+            isVerified: false,
+            acceptedAt: null,
+          },
+        },
       },
     });
+
     const output = await sut.handle({ body });
 
-    expect(output.body).toEqual({ errors: ['Este(a) email já esta cadastrado(a)'] });
+    expect(output).toEqual({
+      statusCode: 409,
+      body: { errors: ['Este(a) email já esta cadastrado(a)'] },
+    });
   });
 
   it('Should return server error', async () => {

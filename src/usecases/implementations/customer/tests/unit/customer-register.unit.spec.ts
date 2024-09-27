@@ -1,5 +1,5 @@
+import { CustomerAggregate } from '@/domain/aggregates/customer';
 import { CustomError } from '@/shared/errors/custom-error';
-import type { CustomerRepositoryDto } from '@/usecases/contracts/database';
 import {
   data,
   makeSutUsecase,
@@ -39,10 +39,15 @@ describe('Register Customer Usecase unit', () => {
     jest.spyOn(repository, 'findFieldOrNull').mockResolvedValueOnce({
       id: '1',
       name: 'any_name',
-      email: 'any_email',
       acceptedTerms: true,
-      password: 'any_password',
-    } as CustomerRepositoryDto);
+      account: {
+        id: '1',
+        email: 'any_email',
+        password: 'any_password',
+        isVerified: false,
+        acceptedAt: null,
+      },
+    } as CustomerAggregate);
 
     try {
       await sut.perform(data);
@@ -56,28 +61,18 @@ describe('Register Customer Usecase unit', () => {
     }
   });
 
-  it('Should call cryptography with correct values', async () => {
-    const { cryptography, sut } = makeSutUsecase();
-
-    const spy = jest.spyOn(cryptography, 'encrypter');
-
-    await sut.perform(data);
-    expect(spy).toHaveBeenCalledWith(data.password);
-  });
-
   it('Should call repository findByField with correct values', async () => {
     const { sut, repository } = makeSutUsecase();
     const spy = jest.spyOn(repository, 'findFieldOrNull');
     await sut.perform(data);
-    expect(spy).toHaveBeenCalledWith('email', data.email);
+    expect(spy).toHaveBeenCalledWith('account', { email: data.email });
   });
 
   it('Should call repository create with correct values', async () => {
-    const { sut, repository, cryptography } = makeSutUsecase();
-    jest.spyOn(cryptography, 'encrypter').mockResolvedValueOnce('password');
+    const { sut, repository } = makeSutUsecase();
     const spy = jest.spyOn(repository, 'create');
     await sut.perform(data);
-    expect(spy).toHaveBeenCalledWith({ ...data, password: 'password', id: expect.any(String) });
+    expect(spy).toHaveBeenCalledWith(expect.any(CustomerAggregate));
   });
 
   it('should return customer on success', async () => {

@@ -1,9 +1,10 @@
+import { makeCryptography } from '@/factories/infra/criptography';
 import { testeServer } from '@/infra/api/routes/config/supertest';
 import { PrismaHelper } from '@/infra/database/prisma/helpers';
 
 beforeEach(async () => {
   const prisma = await PrismaHelper.getPrisma();
-  await prisma.customer.deleteMany();
+  await prisma.account.deleteMany();
 });
 
 describe('RegisterCustomer E2E', () => {
@@ -40,14 +41,14 @@ describe('RegisterCustomer E2E', () => {
     const request = await testeServer();
 
     const email = '2oJbM@example.com';
+    const cripty = makeCryptography();
 
     const prisma = await PrismaHelper.getPrisma();
     await prisma.customer.create({
       data: {
-        id: 'any_id',
-        name: 'any_name',
-        email: email,
-        account: { create: { password: 'any_password' } },
+        name: 'any name',
+        acceptedTerms: true,
+        account: { create: { email: email, password: cripty.encrypter('@Teste123') } },
       },
     });
     const response = await request.post('/user').send({

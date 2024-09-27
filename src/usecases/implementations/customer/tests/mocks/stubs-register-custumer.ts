@@ -1,13 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { CriptographyContractUsecase } from '@/usecases/contracts/cryptography/cryptography-contract-usecase.ts';
-import type {
-  CustomerRepositoryContractsUsecase,
-  CustomerRepositoryDto,
-} from '@/usecases/contracts/database';
+import type { CustomerAggregate } from '@/domain/aggregates/customer';
+import type { CustomerRepositoryContractsUsecase } from '@/usecases/contracts/database';
 import { RegisterCustomerUsecase } from '@/usecases/implementations';
-import type { InputRegisterCustomerDto } from '@/usecases/implementations/customer/register/register-customer-dto';
 
-export const data: InputRegisterCustomerDto = {
+export const data = {
   name: 'Customer',
   email: 'email@teste.com',
   password: '@Teste123',
@@ -16,13 +12,13 @@ export const data: InputRegisterCustomerDto = {
 
 export const repositoryStub = (): CustomerRepositoryContractsUsecase => {
   class CustomerRepository implements CustomerRepositoryContractsUsecase {
-    async findFieldOrNull<K extends keyof CustomerRepositoryDto>(
+    async findFieldOrNull<K extends keyof CustomerAggregate>(
       field: K,
-      value: CustomerRepositoryDto[K],
-    ): Promise<CustomerRepositoryDto | null> {
+      value: CustomerAggregate[K],
+    ): Promise<CustomerAggregate | null> {
       return null;
     }
-    async create(entity: CustomerRepositoryDto): Promise<void> {
+    async create(entity: CustomerAggregate): Promise<void> {
       return;
     }
   }
@@ -30,30 +26,15 @@ export const repositoryStub = (): CustomerRepositoryContractsUsecase => {
   return new CustomerRepository();
 };
 
-export const makeCryptographyStub = (): CriptographyContractUsecase => {
-  class Cryptography implements CriptographyContractUsecase {
-    async encrypter(password: string): Promise<string> {
-      return Promise.resolve('password');
-    }
-    async compare(password: string, hashValue: string): Promise<boolean> {
-      return Promise.resolve(true);
-    }
-  }
-  return new Cryptography();
-};
-
 type SutType = {
   sut: RegisterCustomerUsecase;
   repository: CustomerRepositoryContractsUsecase;
-  cryptography: CriptographyContractUsecase;
 };
 export const makeSutUsecase = (): SutType => {
   const repository = repositoryStub();
-  const cryptography = makeCryptographyStub();
-  const sut = new RegisterCustomerUsecase(repository, cryptography);
+  const sut = new RegisterCustomerUsecase(repository);
   return {
     sut,
     repository,
-    cryptography,
   };
 };

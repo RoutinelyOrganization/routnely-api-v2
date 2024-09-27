@@ -1,8 +1,4 @@
-import {
-  DateIsInThePastError,
-  InvalidDateError,
-  InvalidUniqueWeekdaysError,
-} from '@/domain/entities/activity/errors';
+import { InvalidUniqueWeekdaysError } from '@/domain/entities/activity/errors';
 import type { WeeklyFrequencyModel } from '@/domain/entities/activity/models/weekly-frequency-model';
 import { WeekDaysEnumType } from '@/domain/entities/activity/models/weekly-frequency-model';
 import {
@@ -95,26 +91,6 @@ describe('Weekly Frequency Value Object', () => {
     const weeklyFrequency = WeeklyFrequencyValueObject.create({ quantityPerWeek, finallyDate });
 
     expect(weeklyFrequency.result).toEqual({ props: { quantityPerWeek, finallyDate } });
-  });
-
-  it('Should error if finally date is not a valid date', () => {
-    const datetime = WeeklyFrequencyValueObject.create({
-      ...weeklyFrequencyData,
-      finallyDate: 2 as any,
-    });
-
-    expect(datetime.result).toEqual({
-      props: [new InvalidDateError(), new DateIsInThePastError()],
-    });
-  });
-
-  it('Should return error if the finally date is in the past', () => {
-    const datetime = WeeklyFrequencyValueObject.create({
-      ...weeklyFrequencyData,
-      finallyDate: now,
-    });
-
-    expect(datetime.result).toEqual({ props: [new DateIsInThePastError()] });
   });
 
   it('Should correct weekly frequency without finally date', () => {

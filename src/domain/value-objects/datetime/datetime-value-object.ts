@@ -1,4 +1,5 @@
-import { DateIsInThePastError, InvalidDateError } from '@/domain/entities/activity/errors';
+import type { DateIsInThePastError } from '@/domain/entities/activity/errors';
+import { InvalidDateError } from '@/domain/entities/activity/errors';
 import { FieldIsRequiredError } from '@/domain/errors';
 import type { ResultValueObject } from '@/domain/value-objects/value-object';
 import { ValueObject } from '@/domain/value-objects/value-object';
@@ -29,9 +30,6 @@ export class DatetimeValueObject extends ValueObject<Date> {
     if (!this.isDatetimeValid(value)) {
       this.addError(new InvalidDateError());
     }
-    if (value && !this.isDateInTheFuture(value)) {
-      this.addError(new DateIsInThePastError());
-    }
   }
 
   private static hasDatetime(value: Date): boolean {
@@ -40,9 +38,5 @@ export class DatetimeValueObject extends ValueObject<Date> {
 
   private static isDatetimeValid(value: Date): boolean {
     return value instanceof Date;
-  }
-
-  private static isDateInTheFuture(value: Date): boolean {
-    return value > new Date();
   }
 }
