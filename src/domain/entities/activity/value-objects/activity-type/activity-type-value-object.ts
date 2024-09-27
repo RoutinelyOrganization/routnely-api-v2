@@ -1,12 +1,10 @@
-import { ValueObject } from '@/domain/entities/value-object';
-import { FieldIsRequiredError, InvalidFieldsValuesError } from '@/domain/shared/errors';
-import type { Either } from '@/shared/either';
-import { left, right } from '@/shared/either';
-import { ActivityEnumType } from '../../types';
+import { ActivityEnumType } from '@/domain/entities/activity/types';
+import { FieldIsRequiredError, InvalidFieldsValuesError } from '@/domain/errors';
+import type { ResultValueObject } from '@/domain/value-objects/value-object';
+import { ValueObject } from '@/domain/value-objects/value-object';
+import { CustomError } from '@/shared/errors/custom-error';
 
 const KeysActivityEnumType = Object.values(ActivityEnumType);
-
-type ActivityTypeError = FieldIsRequiredError | InvalidFieldsValuesError;
 
 export class ActivityTypeValueObject extends ValueObject {
   private constructor(value: string) {
@@ -14,15 +12,15 @@ export class ActivityTypeValueObject extends ValueObject {
     Object.freeze(this);
   }
 
-  static create(value: ActivityEnumType): Either<ActivityTypeError[], ActivityTypeValueObject> {
-    const errors = this.validate(value);
-    if (errors) {
-      return left(errors);
-    }
-    return right(new ActivityTypeValueObject(value));
+  static create(value: ActivityEnumType): ResultValueObject {
+    this.validate(value);
+    const errors = this.errors();
+    return errors
+      ? { isvalid: false, result: new CustomError(errors) }
+      : { isvalid: true, result: new ActivityTypeValueObject(value) };
   }
 
-  private static validate(value: string): ActivityTypeError[] | null {
+  private static validate(value: string): void {
     this.clearErrors();
     if (!this.hasValue(value)) {
       this.addError(new FieldIsRequiredError('Tipo'));
@@ -30,7 +28,6 @@ export class ActivityTypeValueObject extends ValueObject {
     if (!this.isValidValue(value)) {
       this.addError(new InvalidFieldsValuesError('Tipo', KeysActivityEnumType));
     }
-    return this.errors();
   }
 
   private static hasValue(value: string): boolean {

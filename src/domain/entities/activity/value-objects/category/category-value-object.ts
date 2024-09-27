@@ -1,12 +1,10 @@
 import { CategoriesEnumType } from '@/domain/entities/activity/types';
-import { ValueObject } from '@/domain/entities/value-object';
-import { FieldIsRequiredError, InvalidFieldsValuesError } from '@/domain/shared/errors';
-import type { Either } from '@/shared/either';
-import { left, right } from '@/shared/either';
+import { FieldIsRequiredError, InvalidFieldsValuesError } from '@/domain/errors';
+import type { ResultValueObject } from '@/domain/value-objects/value-object';
+import { ValueObject } from '@/domain/value-objects/value-object';
+import { CustomError } from '@/shared/errors/custom-error';
 
 const KeysCategories = Object.values(CategoriesEnumType);
-
-type CategoryError = FieldIsRequiredError | InvalidFieldsValuesError;
 
 export class CategoryValueObject extends ValueObject {
   private constructor(value: string) {
@@ -14,15 +12,17 @@ export class CategoryValueObject extends ValueObject {
     Object.freeze(this);
   }
 
-  static create(value: CategoriesEnumType): Either<CategoryError[], CategoryValueObject> {
-    const errors = this.validate(value);
-    if (errors) {
-      return left(errors);
-    }
-    return right(new CategoryValueObject(value));
+  static create(value: CategoriesEnumType): ResultValueObject {
+    this.validate(value);
+
+    const errors = this.errors();
+
+    return errors
+      ? { isvalid: false, result: new CustomError(errors) }
+      : { isvalid: true, result: new CategoryValueObject(value) };
   }
 
-  private static validate(value: string): CategoryError[] | null {
+  private static validate(value: string): void {
     this.clearErrors();
     if (!this.hasValue(value)) {
       this.addError(new FieldIsRequiredError('Categoria'));
@@ -30,7 +30,6 @@ export class CategoryValueObject extends ValueObject {
     if (!this.isValidValue(value)) {
       this.addError(new InvalidFieldsValuesError('Categoria', KeysCategories));
     }
-    return this.errors();
   }
 
   private static hasValue(value: string): boolean {

@@ -1,10 +1,8 @@
 import { InvalidNameError } from '@/domain/entities/customer/errors';
-import { ValueObject } from '@/domain/entities/value-object';
-import { FieldIsRequiredError } from '@/domain/shared/errors';
-import type { Either } from '@/shared/either';
-import { left, right } from '@/shared/either';
-
-type ErrorsNameType = InvalidNameError | FieldIsRequiredError;
+import { FieldIsRequiredError } from '@/domain/errors';
+import type { ResultValueObject } from '@/domain/value-objects/value-object';
+import { ValueObject } from '@/domain/value-objects/value-object';
+import { CustomError } from '@/shared/errors/custom-error';
 
 export class NameValueObject extends ValueObject {
   private constructor(name: string) {
@@ -12,17 +10,17 @@ export class NameValueObject extends ValueObject {
     Object.freeze(this);
   }
 
-  static create(name: string): Either<ErrorsNameType[], NameValueObject> {
-    const errors = this.validate(name);
+  static create(name: string): ResultValueObject {
+    this.validate(name);
 
-    if (errors) {
-      return left(errors);
-    }
+    const errors = this.errors();
 
-    return right(new NameValueObject(name.trim()));
+    return errors
+      ? { isvalid: false, result: new CustomError(errors) }
+      : { isvalid: true, result: new NameValueObject(name) };
   }
 
-  private static validate(name: string): ErrorsNameType[] | null {
+  private static validate(name: string): void {
     this.clearErrors();
 
     if (!this.hasName(name)) {
@@ -31,8 +29,6 @@ export class NameValueObject extends ValueObject {
     if (!this.isNameValid(name) || !this.isNameLengthValid(name)) {
       this.addError(new InvalidNameError());
     }
-
-    return this.errors();
   }
 
   private static hasName(name: string): boolean {

@@ -1,10 +1,8 @@
-import type { ActivityModel } from '@/domain/entities/activity/types';
-import {
-  ActivityEnumType,
-  CategoriesEnumType,
-  WeekDaysEnumType,
-} from '@/domain/entities/activity/types';
-import { ActivityEntity } from './activity-entity';
+import { ActivityEntity } from '@/domain/entities/activity/activity-entity';
+import type { ActivityModel } from '@/domain/entities/activity/models/activity-model';
+import { WeekDaysEnumType } from '@/domain/entities/activity/models/weekly-frequency-model';
+import { ActivityEnumType, CategoriesEnumType } from '@/domain/entities/activity/types';
+import { CustomError } from '@/shared/errors/custom-error';
 
 const now = new Date();
 const futureDate = new Date(now);
@@ -28,11 +26,10 @@ const activityData: ActivityModel = {
 describe('Activity Entity', () => {
   it('Should correct instance of Activity', () => {
     const activity = ActivityEntity.create(activityData);
-    expect(activity.isRight()).toBeTruthy();
-    expect(activity.value).toBeInstanceOf(ActivityEntity);
+    expect(activity).toBeInstanceOf(ActivityEntity);
 
     const { id, customerId, title, description, executeDateTime, type, category, weeklyFrequency } =
-      activity.value as ActivityEntity;
+      activity;
     expect(id).toEqual(activityData.id);
     expect(customerId).toEqual(activityData.customerId);
     expect(title).toEqual(activityData.title);
@@ -44,29 +41,28 @@ describe('Activity Entity', () => {
   });
 
   it('Should return all errors in activity', () => {
-    const activity = ActivityEntity.create({
-      weeklyFrequency: { quantityPerWeek: 0, weekDays: ['any_value'], finallyDate: 'any_value' },
-    } as any);
+    try {
+      ActivityEntity.create({ id: 'any_id' } as any);
+    } catch (error) {
+      expect(error).toBeInstanceOf(CustomError);
 
-    expect(activity.isLeft()).toBeTruthy();
-    expect(activity.isRight()).toBeFalsy();
-    expect(activity.value).toEqual({
-      errors: [
-        'O campo Título é obrigatório',
-        'O título deve ter entre 3 e 50 caracteres',
-        'O campo Descrição é obrigatório',
-        'A descrição deve ter entre 3 e 50 caracteres',
-        'O campo Data e hora é obrigatório',
-        'Este campo deve ser uma data válida',
-        'O campo Tipo é obrigatório',
-        'O campo Tipo deve ter um dos seguintes valores: habit, task',
-        'O campo Categoria é obrigatório',
-        'O campo Categoria deve ter um dos seguintes valores: Career, Finance, Studies, Health, Leisure, Productivity, Several',
-        'O campo Quantidade semanal deve ser um número positivo',
-        'O campo Dias da semana deve ter um dos seguintes valores: monday, tuesday, wednesday, thursday, friday, saturday, sunday',
-        'Este campo deve ser uma data válida',
-        'A data não pode ser no passado',
-      ],
-    });
+      const errorValue = error as CustomError;
+      expect(errorValue.formatErrors).toStrictEqual({
+        codeError: 400,
+        messages: [
+          'O campo id está inválido',
+          'O campo Título é obrigatório',
+          'O título deve ter entre 3 e 50 caracteres',
+          'O campo Descrição é obrigatório',
+          'A descrição deve ter entre 3 e 50 caracteres',
+          'O campo Data e hora é obrigatório',
+          'Este campo deve ser uma data válida',
+          'O campo Tipo é obrigatório',
+          'O campo Tipo deve ter um dos seguintes valores: habit, task',
+          'O campo Categoria é obrigatório',
+          'O campo Categoria deve ter um dos seguintes valores: Career, Finance, Studies, Health, Leisure, Productivity, Several',
+        ],
+      });
+    }
   });
 });

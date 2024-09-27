@@ -1,30 +1,28 @@
 import type { RegisterCustomerContractDomain } from '@/domain/contracts';
 import type { ControllerContractPresentation, ValidationContract } from '@/presentation/contracts';
-import { badRequest, noContent, serverError } from '@/presentation/helpers/http-helpers';
+import { ControllerError } from '@/presentation/controllers/controller-class-error';
+import { noContent } from '@/presentation/helpers/http-helpers';
 import type { ControllerRequestType, ControllerResponseType } from '@/presentation/types';
 
-export class RegisterCustomerController implements ControllerContractPresentation {
+export class RegisterCustomerController
+  extends ControllerError
+  implements ControllerContractPresentation
+{
   constructor(
     private validator: ValidationContract,
     private usecase: RegisterCustomerContractDomain,
-  ) {}
+  ) {
+    super();
+  }
   async handle(request: ControllerRequestType): Promise<ControllerResponseType> {
     try {
-      const errors = this.validator.validate(request.body);
+      this.validator.validate(request.body);
 
-      if (errors.isLeft()) {
-        return badRequest(errors.value);
-      }
-
-      const result = await this.usecase.perform(request.body);
-
-      if (result.isLeft()) {
-        return badRequest(result.value);
-      }
+      await this.usecase.perform(request.body);
 
       return noContent();
     } catch (error) {
-      return serverError(error as Error);
+      return this.returnError(error as any);
     }
   }
 }

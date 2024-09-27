@@ -1,13 +1,14 @@
+import { makeCryptography } from '@/factories/infra/criptography';
 import { testeServer } from '@/infra/api/routes/config/supertest';
 import { PrismaHelper } from '@/infra/database/prisma/helpers';
 
 beforeEach(async () => {
   const prisma = await PrismaHelper.getPrisma();
-  await prisma.customer.deleteMany();
+  await prisma.account.deleteMany();
 });
 
 describe('RegisterCustomer E2E', () => {
-  it('Should return status-code 204 and body undefined on success', async () => {
+  it('Should return status-code 204 and no body on success', async () => {
     const request = await testeServer();
     const response = await request.post('/user').send({
       name: 'John Doe',
@@ -21,7 +22,7 @@ describe('RegisterCustomer E2E', () => {
     expect(response.body).toEqual({});
   });
 
-  it('Should return status-code 400 and body undefined on error', async () => {
+  it('Should return status-code 400 and body with errors description', async () => {
     const request = await testeServer();
     const response = await request.post('/user').send({
       name: 'John Doe',
@@ -40,14 +41,14 @@ describe('RegisterCustomer E2E', () => {
     const request = await testeServer();
 
     const email = '2oJbM@example.com';
+    const cripty = makeCryptography();
 
     const prisma = await PrismaHelper.getPrisma();
     await prisma.customer.create({
       data: {
-        id: 'any_id',
-        name: 'any_name',
-        email: email,
-        account: { create: { password: 'any_password' } },
+        name: 'any name',
+        acceptedTerms: true,
+        account: { create: { email: email, password: cripty.encrypter('@Teste123') } },
       },
     });
     const response = await request.post('/user').send({
@@ -58,9 +59,9 @@ describe('RegisterCustomer E2E', () => {
       acceptedTerms: true,
     });
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(409);
     expect(response.body).toEqual({
-      errors: ['O email informado já existe'],
+      errors: ['Este(a) email já esta cadastrado(a)'],
     });
   });
 });

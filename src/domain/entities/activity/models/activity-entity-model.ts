@@ -5,7 +5,7 @@ import type {
   DescriptionValueObject,
   TitleValueObject,
   WeeklyFrequencyValueObject,
-} from '../value-objects';
+} from '@/domain/entities/activity/value-objects';
 
 export type ActivityEntityModel = {
   id: string;

@@ -1,3 +1,4 @@
-export * from './acceptTerms/acceptTerms-value-objects';
-export * from './email/email-value-objects';
-export * from './name/name-value-object';
+// created from 'create-ts-index'
+
+export * from './acceptTerms';
+export * from './name';

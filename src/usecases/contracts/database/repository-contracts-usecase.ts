@@ -1,9 +1,9 @@
-import type { Either } from '@/shared/either';
+import type { Aggregate, Entity } from '@/domain';
 
-export interface FindByFieldRepositoryContract<T> {
-  findByField<K extends keyof T>(field: K, value: T[K]): Promise<Either<Error, T | null>>;
+export interface FindFieldOrNullRepositoryContract<T extends Entity | Aggregate> {
+  findFieldOrNull<K extends keyof T>(field: K, value: T[K] | Partial<T[K]>): Promise<T | null>;
 }
 
-export interface CreateRepositoryContract<T> {
-  create(entity: T): Promise<Either<Error, void>>;
+export interface CreateRepositoryContract<T extends Entity | Aggregate> {
+  create(entity: T): Promise<void>;
 }

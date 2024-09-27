@@ -1,11 +1,10 @@
-import type { ResponseCustomerEntityType } from '@/domain/entities/customer/types';
+import type { CustomerEntityModel, CustomerModel } from '@/domain/entities/customer/models';
+import { AcceptTermsValueObject, NameValueObject } from '@/domain/entities/customer/value-objects';
 import { Entity } from '@/domain/entities/entity';
-import { left, right } from '@/shared/either';
-import type { CustomerEntityModel, CustomerModel } from './models';
-import { AcceptTermsValueObject, EmailValueObject, NameValueObject } from './value-objects';
+import { CustomError } from '@/shared/errors/custom-error';
 
 export class CustomerEntity extends Entity<CustomerEntityModel> {
-  private constructor(protected props: CustomerEntityModel) {
+  protected constructor(protected props: CustomerEntityModel) {
     super(props);
     Object.freeze(this);
   }
@@ -14,54 +13,40 @@ export class CustomerEntity extends Entity<CustomerEntityModel> {
     return this.props.name.value;
   }
 
-  get email(): string {
-    return this.props.email.value;
-  }
-
   get acceptedTerms(): boolean {
     return this.props.acceptedTerms.value;
   }
 
-  static create(data: CustomerModel): ResponseCustomerEntityType {
-    const result = this.validate(data) as CustomerEntityModel;
+  static create(data: CustomerModel): CustomerEntity {
+    const result = this.validate(data);
 
-    if (!result) {
-      return left(this.errors()!);
-    }
-
-    return right(
-      new CustomerEntity({
-        id: result.id as string,
-        name: result.name as NameValueObject,
-        email: result.email as EmailValueObject,
-        acceptedTerms: result.acceptedTerms as AcceptTermsValueObject,
-      }),
-    );
+    return new CustomerEntity(result);
   }
 
-  static validate({ id, name, email, acceptedTerms }: CustomerModel): void | CustomerEntityModel {
+  static validate({ id, name, acceptedTerms }: CustomerModel): CustomerEntityModel {
     this.clearErrors();
 
     const idOrError = this.validateId(id);
     const nameOrError = NameValueObject.create(name);
-    const emailOrError = EmailValueObject.create(email);
     const acceptedTermsOrError = AcceptTermsValueObject.create(acceptedTerms);
 
-    const results = [idOrError, nameOrError, emailOrError, acceptedTermsOrError];
+    const responses = [idOrError, nameOrError, acceptedTermsOrError];
 
-    for (const result of results) {
-      if (result.isLeft()) {
-        this.addObjectError(result.value);
+    for (const response of responses) {
+      if (!response.isvalid) {
+        this.addError(response.result.errors);
       }
     }
 
-    if (this.errors()) return;
+    const errors = this.errors();
+    if (errors) {
+      throw new CustomError(errors);
+    }
 
     return {
-      id: idOrError.value as string,
-      name: nameOrError.value as NameValueObject,
-      email: emailOrError.value as EmailValueObject,
-      acceptedTerms: acceptedTermsOrError.value as AcceptTermsValueObject,
+      id: idOrError.result as string,
+      name: nameOrError.result as NameValueObject,
+      acceptedTerms: acceptedTermsOrError.result as AcceptTermsValueObject,
     };
   }
 }

@@ -1,1 +1,4 @@
-export * from './customer/customer-repository-infra';
+// created from 'create-ts-index'
+
+export * from './customer';
+export * from './tests';

@@ -1,5 +1,7 @@
-export class DateIsInThePastError extends Error {
+import { CustomErrorAbstract } from '@/shared/errors/custom-error';
+
+export class DateIsInThePastError extends CustomErrorAbstract {
   constructor() {
-    super('A data não pode ser no passado');
+    super({ codeError: 400, message: 'A data não pode ser no passado' });
   }
 }

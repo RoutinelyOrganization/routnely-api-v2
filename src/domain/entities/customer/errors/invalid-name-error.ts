@@ -1,5 +1,10 @@
-export class InvalidNameError extends Error {
+import { CustomErrorAbstract } from '@/shared/errors/custom-error';
+
+export class InvalidNameError extends CustomErrorAbstract {
   constructor() {
-    super('O nome deve ter pelo menos 3 caracteres e apenas letras');
+    super({
+      codeError: 400,
+      message: 'O nome deve ter pelo menos 3 caracteres e apenas letras',
+    });
   }
 }

@@ -1,10 +1,8 @@
 import { InvalidFormatDescriptionError } from '@/domain/entities/activity/errors';
-import { ValueObject } from '@/domain/entities/value-object';
-import { FieldIsRequiredError } from '@/domain/shared/errors';
-import type { Either } from '@/shared/either';
-import { left, right } from '@/shared/either';
-
-type DescriptionError = FieldIsRequiredError | InvalidFormatDescriptionError;
+import { FieldIsRequiredError } from '@/domain/errors';
+import type { ResultValueObject } from '@/domain/value-objects/value-object';
+import { ValueObject } from '@/domain/value-objects/value-object';
+import { CustomError } from '@/shared/errors/custom-error';
 
 export class DescriptionValueObject extends ValueObject {
   private constructor(value: string) {
@@ -12,16 +10,17 @@ export class DescriptionValueObject extends ValueObject {
     Object.freeze(this);
   }
 
-  static create(value: string): Either<DescriptionError[], DescriptionValueObject> {
-    const errors = this.validate(value);
-    if (errors) {
-      return left(errors);
-    }
+  static create(value: string): ResultValueObject {
+    this.validate(value);
 
-    return right(new DescriptionValueObject(value.trim()));
+    const errors = this.errors();
+
+    return errors
+      ? { isvalid: false, result: new CustomError(errors) }
+      : { isvalid: true, result: new DescriptionValueObject(value) };
   }
 
-  private static validate(value: string): DescriptionError[] | null {
+  private static validate(value: string): void {
     this.clearErrors();
     if (!this.hasDescription(value)) {
       this.addError(new FieldIsRequiredError('Descrição'));
@@ -29,7 +28,6 @@ export class DescriptionValueObject extends ValueObject {
     if (!this.hasCorrectDescriptionFormat(value)) {
       this.addError(new InvalidFormatDescriptionError());
     }
-    return this.errors();
   }
 
   private static hasDescription(description: string): boolean {

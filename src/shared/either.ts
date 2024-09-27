@@ -1,16 +1,8 @@
-type EitherError = Error | Error[];
-type ObjectError = { errors: string[] };
+import type { CustomError } from './errors/custom-error';
 
-export type Either<L extends EitherError, R> = Left<L, R> | Right<L, R>;
-class Left<L extends EitherError, R> {
-  readonly value: { errors: string[] };
-
-  constructor(error: L) {
-    // Formata o erro diretamente no construtor
-    this.value = {
-      errors: Array.isArray(error) ? error.flatMap(err => [err.message]) : [error.message],
-    };
-  }
+export type Either<L extends CustomError, R> = Left<L, R> | Right<L, R>;
+class Left<L extends CustomError, R> {
+  constructor(readonly value: L) {}
 
   isLeft(): this is Left<L, R> {
     return true;
@@ -21,7 +13,7 @@ class Left<L extends EitherError, R> {
   }
 }
 
-class Right<L extends EitherError, R> {
+class Right<L extends CustomError, R> {
   constructor(readonly value: R) {}
 
   isLeft(): this is Left<L, R> {
@@ -33,18 +25,12 @@ class Right<L extends EitherError, R> {
   }
 }
 
-export const left = <L extends EitherError, R>(error: L | ObjectError): Left<L, R> => {
-  if (error instanceof Error || error instanceof Array) {
-    return new Left<L, R>(error);
-  }
-  const { errors } = error;
-  const newErrorArray = errors.map(err => new Error(err));
-
-  return new Left<Error[], R>(newErrorArray);
+export const left = <L extends CustomError, R>(error: L): Left<L, R> => {
+  return new Left<L, R>(error);
 };
 
-export function right<L extends EitherError, R extends void>(result?: R): Right<L, R>;
-export function right<L extends EitherError, R>(result: R): Right<L, R>;
-export function right<L extends EitherError, R>(result: R): Right<L, R> {
+export function right<L extends CustomError, R extends void>(result?: R): Right<L, R>;
+export function right<L extends CustomError, R>(result: R): Right<L, R>;
+export function right<L extends CustomError, R>(result: R): Right<L, R> {
   return new Right<L, R>(result);
 }

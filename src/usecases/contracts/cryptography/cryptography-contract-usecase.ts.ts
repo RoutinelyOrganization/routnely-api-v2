@@ -1,4 +1,4 @@
 export interface CriptographyContractUsecase {
-  encrypter: (value: string) => Promise<string>;
-  compare: (value: string, hash: string) => Promise<boolean>;
+  encrypter: (value: string) => string;
+  decrypter: (value: string) => string;
 }

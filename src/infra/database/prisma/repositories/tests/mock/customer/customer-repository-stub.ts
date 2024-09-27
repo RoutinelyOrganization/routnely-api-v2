@@ -1,29 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { right, type Either } from '@/shared/either';
-import type {
-  CustomerRepositoryContractsUsecase,
-  CustomerRepositoryDto,
-} from '@/usecases/contracts/database';
+import type { CustomerAggregate } from '@/domain/aggregates/customer';
+import type { CustomerRepositoryContractsUsecase } from '@/usecases/contracts/database';
 
-const dataCustomerRepo: CustomerRepositoryDto = {
-  id: 'any_id',
-  name: 'any_name',
-  email: 'any_email',
-  password: 'any_password',
+const dataCustomerRepo = {
+  name: 'any name',
+  email: 'any_email@email.com',
+  password: '@Test123',
   acceptedTerms: true,
 };
 
 const stubCustomerRepository = (): CustomerRepositoryContractsUsecase => {
   class CustomerRepositoryStub implements CustomerRepositoryContractsUsecase {
-    async create(customer: CustomerRepositoryDto): Promise<Either<Error, void>> {
-      return right();
-    }
-    async findByField<K extends keyof CustomerRepositoryDto>(
+    async findFieldOrNull<K extends keyof CustomerAggregate>(
       field: K,
-      value: CustomerRepositoryDto[K],
-    ): Promise<Either<Error, CustomerRepositoryDto | null>> {
-      if (dataCustomerRepo[field] !== value) return right(null);
-      return right(dataCustomerRepo);
+      value: CustomerAggregate[K],
+    ): Promise<CustomerAggregate | null> {
+      return null;
+    }
+    async create(customer: CustomerAggregate): Promise<void> {
+      return;
     }
   }
   return new CustomerRepositoryStub();

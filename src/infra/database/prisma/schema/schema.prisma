@@ -8,22 +8,23 @@ datasource db {
 }
 
 model Customer {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
-  createdAt DateTime @default(now()) @map("created_at")
-  accountId String   @unique @map("account_id")
-  account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  id            String   @id @default(uuid())
+  name          String
+  acceptedTerms Boolean
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+  accountId     String   @unique @map("account_id")
+  account       Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
   @@map("customer")
 }
 
 model Account {
   id         String    @id @default(uuid())
+  email      String    @unique
   password   String
-  isVerified Boolean?  @map("is_verified")
-  acceptedAt DateTime  @default(now()) @map("accepted_at")
+  isVerified Boolean   @default(false) @map("is_verified")
+  acceptedAt DateTime? @map("accepted_at")
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @updatedAt @map("updated_at")
   customer   Customer?

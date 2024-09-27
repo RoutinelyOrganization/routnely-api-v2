@@ -1,15 +1,11 @@
-import {
-  DateIsInThePastError,
-  InvalidDateError,
-  InvalidUniqueWeekdaysError,
-} from '@/domain/entities/activity/errors';
-import type { WeeklyFrequencyModel } from '@/domain/entities/activity/types';
-import { WeekDaysEnumType } from '@/domain/entities/activity/types';
+import { InvalidUniqueWeekdaysError } from '@/domain/entities/activity/errors';
+import type { WeeklyFrequencyModel } from '@/domain/entities/activity/models/weekly-frequency-model';
+import { WeekDaysEnumType } from '@/domain/entities/activity/models/weekly-frequency-model';
 import {
   InvalidArrayInstanceError,
   InvalidFieldPositiveNumberError,
   InvalidFieldsValuesError,
-} from '@/domain/shared/errors';
+} from '@/domain/errors';
 import { WeeklyFrequencyValueObject } from './weekly-frequency-value-object';
 
 const now = new Date();
@@ -30,10 +26,9 @@ describe('Weekly Frequency Value Object', () => {
       ...weeklyFrequencyData,
       quantityPerWeek: '2' as any,
     });
-    expect(weeklyFrequency.isLeft()).toBeTruthy();
-    expect(weeklyFrequency.isRight()).toBeFalsy();
-    expect(weeklyFrequency.value).toEqual({
-      errors: [new InvalidFieldPositiveNumberError('Quantidade semanal').message],
+
+    expect(weeklyFrequency.result).toEqual({
+      props: [new InvalidFieldPositiveNumberError('Quantidade semanal')],
     });
   });
 
@@ -42,10 +37,9 @@ describe('Weekly Frequency Value Object', () => {
       ...weeklyFrequencyData,
       quantityPerWeek: 0,
     });
-    expect(weeklyFrequency.isLeft()).toBeTruthy();
-    expect(weeklyFrequency.isRight()).toBeFalsy();
-    expect(weeklyFrequency.value).toEqual({
-      errors: [new InvalidFieldPositiveNumberError('Quantidade semanal').message],
+
+    expect(weeklyFrequency.result).toEqual({
+      props: [new InvalidFieldPositiveNumberError('Quantidade semanal')],
     });
   });
 
@@ -53,9 +47,8 @@ describe('Weekly Frequency Value Object', () => {
     const { weekDays, finallyDate } = weeklyFrequencyData;
 
     const weeklyFrequency = WeeklyFrequencyValueObject.create({ weekDays, finallyDate });
-    expect(weeklyFrequency.isLeft()).toBeFalsy();
-    expect(weeklyFrequency.isRight()).toBeTruthy();
-    expect(weeklyFrequency.value).toEqual({ props: { weekDays, finallyDate } });
+
+    expect(weeklyFrequency.result).toEqual({ props: { weekDays, finallyDate } });
   });
 
   it("Should return error if week days isn't an array", () => {
@@ -63,13 +56,12 @@ describe('Weekly Frequency Value Object', () => {
       ...weeklyFrequencyData,
       weekDays: 'test' as any,
     });
-    expect(weeklyFrequency.isLeft()).toBeTruthy();
-    expect(weeklyFrequency.isRight()).toBeFalsy();
-    expect(weeklyFrequency.value).toEqual({
-      errors: [
-        new InvalidArrayInstanceError().message,
-        new InvalidFieldsValuesError('Dias da semana', keysWeekDays).message,
-        new InvalidUniqueWeekdaysError().message,
+
+    expect(weeklyFrequency.result).toEqual({
+      props: [
+        new InvalidArrayInstanceError(),
+        new InvalidFieldsValuesError('Dias da semana', keysWeekDays),
+        new InvalidUniqueWeekdaysError(),
       ],
     });
   });
@@ -79,10 +71,9 @@ describe('Weekly Frequency Value Object', () => {
       ...weeklyFrequencyData,
       weekDays: ['test'] as any,
     });
-    expect(weeklyFrequency.isLeft()).toBeTruthy();
-    expect(weeklyFrequency.isRight()).toBeFalsy();
-    expect(weeklyFrequency.value).toEqual({
-      errors: [new InvalidFieldsValuesError('Dias da semana', keysWeekDays).message],
+
+    expect(weeklyFrequency.result).toEqual({
+      props: [new InvalidFieldsValuesError('Dias da semana', keysWeekDays)],
     });
   });
 
@@ -91,53 +82,27 @@ describe('Weekly Frequency Value Object', () => {
       ...weeklyFrequencyData,
       weekDays: [WeekDaysEnumType.monday, WeekDaysEnumType.monday],
     });
-    expect(weeklyFrequency.isLeft()).toBeTruthy();
-    expect(weeklyFrequency.isRight()).toBeFalsy();
-    expect(weeklyFrequency.value).toEqual({ errors: [new InvalidUniqueWeekdaysError().message] });
+
+    expect(weeklyFrequency.result).toEqual({ props: [new InvalidUniqueWeekdaysError()] });
   });
 
   it('Should correct weekly frequency without week days', () => {
     const { quantityPerWeek, finallyDate } = weeklyFrequencyData;
     const weeklyFrequency = WeeklyFrequencyValueObject.create({ quantityPerWeek, finallyDate });
-    expect(weeklyFrequency.isLeft()).toBeFalsy();
-    expect(weeklyFrequency.isRight()).toBeTruthy();
-    expect(weeklyFrequency.value).toEqual({ props: { quantityPerWeek, finallyDate } });
-  });
 
-  it('Should error if finally date is not a valid date', () => {
-    const datetime = WeeklyFrequencyValueObject.create({
-      ...weeklyFrequencyData,
-      finallyDate: 2 as any,
-    });
-    expect(datetime.isLeft()).toBeTruthy();
-    expect(datetime.isRight()).toBeFalsy();
-    expect(datetime.value).toEqual({
-      errors: [new InvalidDateError().message, new DateIsInThePastError().message],
-    });
-  });
-
-  it('Should return error if the finally date is in the past', () => {
-    const datetime = WeeklyFrequencyValueObject.create({
-      ...weeklyFrequencyData,
-      finallyDate: now,
-    });
-    expect(datetime.isLeft()).toBeTruthy();
-    expect(datetime.isRight()).toBeFalsy();
-    expect(datetime.value).toEqual({ errors: [new DateIsInThePastError().message] });
+    expect(weeklyFrequency.result).toEqual({ props: { quantityPerWeek, finallyDate } });
   });
 
   it('Should correct weekly frequency without finally date', () => {
     const { quantityPerWeek, weekDays } = weeklyFrequencyData;
     const weeklyFrequency = WeeklyFrequencyValueObject.create({ quantityPerWeek, weekDays });
-    expect(weeklyFrequency.isLeft()).toBeFalsy();
-    expect(weeklyFrequency.isRight()).toBeTruthy();
-    expect(weeklyFrequency.value).toEqual({ props: { quantityPerWeek, weekDays } });
+
+    expect(weeklyFrequency.result).toEqual({ props: { quantityPerWeek, weekDays } });
   });
 
   it('Should return correct weekly frequency', () => {
     const weeklyFrequency = WeeklyFrequencyValueObject.create(weeklyFrequencyData);
-    expect(weeklyFrequency.isLeft()).toBeFalsy();
-    expect(weeklyFrequency.isRight()).toBeTruthy();
-    expect(weeklyFrequency.value).toEqual({ props: weeklyFrequencyData });
+
+    expect(weeklyFrequency.result).toEqual({ props: weeklyFrequencyData });
   });
 });
