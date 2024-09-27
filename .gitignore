@@ -43,3 +43,8 @@ lerna-debug.log*
 # CACHE
 .eslintcache
 tsconfig.build.tsbuildinfo
+
+test.env
+
+**/memory
+**/memory-journal

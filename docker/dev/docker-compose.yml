@@ -4,7 +4,7 @@ services:
   backend:
     build:
       context: '../../'
-      dockerfile: docker/dev/Dockerfile
+      dockerfile: docker/dev/Dockerfile.app
     container_name: routnely-backend
     ports:
       - '3000:3000'

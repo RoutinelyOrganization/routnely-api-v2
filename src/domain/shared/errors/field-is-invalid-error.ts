@@ -1,5 +1,5 @@
 export class InvalidFieldError extends Error {
   constructor(field: string) {
-    super(`${field} is invalid`);
+    super(`O campo ${field} está inválido`);
   }
 }

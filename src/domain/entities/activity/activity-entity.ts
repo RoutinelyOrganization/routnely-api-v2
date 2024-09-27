@@ -1,4 +1,4 @@
-import {
+import type {
   ActivityEntityModel,
   ActivityModel,
   ResponseEntityActivityType,
@@ -12,20 +12,17 @@ import {
   TitleValueObject,
   WeeklyFrequencyValueObject,
 } from '@/domain/entities/activity/value-objects';
-import { IdValueObject } from '@/domain/shared/value-objects/id/id-value-object';
 import { left, right } from '@/shared/either';
+import { Entity } from '../entity';
 
-export class ActivityEntity {
-  private constructor(private props: ActivityEntityModel) {
+export class ActivityEntity extends Entity<ActivityEntityModel> {
+  private constructor(protected props: ActivityEntityModel) {
+    super(props);
     Object.freeze(this);
   }
 
-  get id(): string {
-    return this.props.id.value;
-  }
-
   get customerId(): string {
-    return this.props.customerId.value;
+    return this.props.customerId;
   }
 
   get title(): string {
@@ -53,10 +50,32 @@ export class ActivityEntity {
   }
 
   static create(props: ActivityModel): ResponseEntityActivityType {
-    const { id, customerId, title, description, executeDateTime, type, category, weeklyFrequency } = props;
+    const result = this.validate(props) as ActivityEntityModel;
 
-    const idOrError = IdValueObject.create(id);
-    const customerIdOrError = IdValueObject.create(customerId);
+    if (!result) {
+      return left(this.errors()!);
+    }
+
+    return right(
+      new ActivityEntity({
+        id: result.id as string,
+        customerId: result.customerId as string,
+        title: result.title as TitleValueObject,
+        description: result.description as DescriptionValueObject,
+        executeDateTime: result.executeDateTime as DatetimeValueObject,
+        type: result.type as ActivityTypeValueObject,
+        category: result.category as CategoryValueObject,
+        weeklyFrequency: result.weeklyFrequency as WeeklyFrequencyValueObject,
+      }),
+    );
+  }
+
+  private static validate(props: ActivityModel): ActivityEntityModel | void {
+    const { id, customerId, title, description, executeDateTime, type, category, weeklyFrequency } =
+      props;
+
+    const idOrError = this.validateId(id);
+    const customerIdOrError = this.validateId(customerId);
     const titleOrError = TitleValueObject.create(title);
     const descriptionOrError = DescriptionValueObject.create(description);
     const executeDateTimeOrError = DatetimeValueObject.create(executeDateTime);
@@ -73,26 +92,27 @@ export class ActivityEntity {
       categoryOrError,
     ];
 
-    const weeklyFrequencyOrError = weeklyFrequency && WeeklyFrequencyValueObject.create(weeklyFrequency);
+    const weeklyFrequencyOrError =
+      weeklyFrequency && WeeklyFrequencyValueObject.create(weeklyFrequency);
     weeklyFrequencyOrError && results.push(weeklyFrequencyOrError as any); // typed with any to avoid putting all types in the array
 
     for (const result of results) {
       if (result.isLeft()) {
-        return left(result.value);
+        this.addObjectError(result.value);
       }
     }
 
-    return right(
-      new ActivityEntity({
-        id: idOrError.value as IdValueObject,
-        customerId: customerIdOrError.value as IdValueObject,
-        title: titleOrError.value as TitleValueObject,
-        description: descriptionOrError.value as DescriptionValueObject,
-        executeDateTime: executeDateTimeOrError.value as DatetimeValueObject,
-        type: typeOrError.value as ActivityTypeValueObject,
-        category: categoryOrError.value as CategoryValueObject,
-        weeklyFrequency: weeklyFrequencyOrError?.value as WeeklyFrequencyValueObject,
-      }),
-    );
+    if (this.errors()) return;
+
+    return {
+      id: idOrError.value as string,
+      customerId: customerIdOrError.value as string,
+      title: titleOrError.value as TitleValueObject,
+      description: descriptionOrError.value as DescriptionValueObject,
+      executeDateTime: executeDateTimeOrError.value as DatetimeValueObject,
+      type: typeOrError.value as ActivityTypeValueObject,
+      category: categoryOrError.value as CategoryValueObject,
+      weeklyFrequency: weeklyFrequencyOrError?.value as WeeklyFrequencyValueObject,
+    };
   }
 }

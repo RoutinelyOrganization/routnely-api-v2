@@ -1,5 +1,5 @@
 export class FieldIsRequiredError extends Error {
   constructor(field: string) {
-    super(`${field} is required`);
+    super(`O campo ${field} é obrigatório`);
   }
 }

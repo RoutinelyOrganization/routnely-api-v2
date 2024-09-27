@@ -7,125 +7,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Account {
-  id                 String              @id @default(uuid())
-  email              String              @unique
-  password           String
-  permissions        String[]
-  isVerified         Boolean?            @map("is_verified")
-  acceptedAt         DateTime            @default(now()) @map("accepted_at")
-  updatedAt          DateTime            @updatedAt @map("updated_at") @db.Timestamptz(3)
-  createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
-  sessions           Session[]
-  profile            Profile?
-  resetPasswordToken ResetPasswordToken?
-  tasks              Task[]
-  goals              Goals[]
-
-  @@map("accounts")
-}
-
-model ResetPasswordToken {
-  id        Int      @id @default(autoincrement())
-  token     String   @unique
-  account   Account? @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  accountId String   @unique @map("account_id")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-}
-
-model Profile {
-  id        Int      @id @default(autoincrement())
+model Customer {
+  id        String   @id @default(uuid())
   name      String
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  email     String   @unique
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
   accountId String   @unique @map("account_id")
   account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
-  @@map("profiles")
+  @@map("customer")
 }
 
-model Session {
-  id               Int      @id @default(autoincrement())
-  sessionToken     String   @unique @map("session_token")
-  refreshToken     String   @unique @map("refresh_token")
-  accountId        String   @map("account_id")
-  name             String
-  permissions      String[]
-  remember         Boolean  @default(false)
-  sessionExpiresIn DateTime @map("session_expires_in")
-  refreshExpiresIn DateTime @map("refresh_expires_in")
-  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
-  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  account          Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+model Account {
+  id         String    @id @default(uuid())
+  password   String
+  isVerified Boolean?  @map("is_verified")
+  acceptedAt DateTime  @default(now()) @map("accepted_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  customer   Customer?
 
-  @@map("sessions")
-}
-
-model Task {
-  id          Int            @id @default(autoincrement())
-  name        String
-  date        DateTime
-  description String
-  priority    TaskPriorities
-  tag         TaskTags
-  category    TaskCategories
-  checked     Boolean        @default(false)
-  accountId   String         @map("account_id")
-  account     Account        @relation(fields: [accountId], references: [id])
-  updatedAt   DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
-  createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
-
-  @@map("tasks")
-}
-
-model Goals {
-  id          Int             @id @default(autoincrement())
-  description String
-  goal        String
-  start_date  DateTime        @db.Date
-  end_date    DateTime        @db.Date
-  periodicity GoalPeriodicity
-  type        GoalType
-  accountId   String          @map("account_id")
-  account     Account         @relation(fields: [accountId], references: [id])
-  updatedAt   DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
-  createdAt   DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
-
-  @@map("goals")
-}
-
-enum GoalPeriodicity {
-  daily
-  weekly
-  biweekly
-  monthly
-  bimonthly
-}
-
-enum GoalType {
-  personal
-  profissional
-}
-
-enum TaskPriorities {
-  low
-  medium
-  high
-  urgent
-}
-
-enum TaskTags {
-  application
-  account
-  exercise
-  beauty
-  literature
-}
-
-enum TaskCategories {
-  personal
-  study
-  finance
-  career
-  health
+  @@map("accounts")
 }

@@ -1,7 +1,8 @@
 import { CategoriesEnumType } from '@/domain/entities/activity/types';
+import { ValueObject } from '@/domain/entities/value-object';
 import { FieldIsRequiredError, InvalidFieldsValuesError } from '@/domain/shared/errors';
-import { ValueObject } from '@/shared/domain';
-import { Either, left, right } from '@/shared/either';
+import type { Either } from '@/shared/either';
+import { left, right } from '@/shared/either';
 
 const KeysCategories = Object.values(CategoriesEnumType);
 
@@ -13,15 +14,23 @@ export class CategoryValueObject extends ValueObject {
     Object.freeze(this);
   }
 
-  static create(value: CategoriesEnumType): Either<CategoryError, CategoryValueObject> {
-    if (!this.hasValue(value)) {
-      return left(new FieldIsRequiredError('Categoria'));
-    }
-
-    if (!this.isValidValue(value)) {
-      return left(new InvalidFieldsValuesError('Categoria', KeysCategories));
+  static create(value: CategoriesEnumType): Either<CategoryError[], CategoryValueObject> {
+    const errors = this.validate(value);
+    if (errors) {
+      return left(errors);
     }
     return right(new CategoryValueObject(value));
+  }
+
+  private static validate(value: string): CategoryError[] | null {
+    this.clearErrors();
+    if (!this.hasValue(value)) {
+      this.addError(new FieldIsRequiredError('Categoria'));
+    }
+    if (!this.isValidValue(value)) {
+      this.addError(new InvalidFieldsValuesError('Categoria', KeysCategories));
+    }
+    return this.errors();
   }
 
   private static hasValue(value: string): boolean {

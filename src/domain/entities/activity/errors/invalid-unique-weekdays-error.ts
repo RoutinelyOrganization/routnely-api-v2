@@ -1,5 +1,5 @@
 export class InvalidUniqueWeekdaysError extends Error {
   constructor() {
-    super('O array de dias da semana deve ter valores únicos');
+    super('O array de dias da semana não pode  ter dias repetidos');
   }
 }

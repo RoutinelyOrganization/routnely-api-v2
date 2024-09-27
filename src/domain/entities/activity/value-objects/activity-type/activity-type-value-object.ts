@@ -1,6 +1,7 @@
+import { ValueObject } from '@/domain/entities/value-object';
 import { FieldIsRequiredError, InvalidFieldsValuesError } from '@/domain/shared/errors';
-import { ValueObject } from '@/shared/domain';
-import { Either, left, right } from '@/shared/either';
+import type { Either } from '@/shared/either';
+import { left, right } from '@/shared/either';
 import { ActivityEnumType } from '../../types';
 
 const KeysActivityEnumType = Object.values(ActivityEnumType);
@@ -13,15 +14,23 @@ export class ActivityTypeValueObject extends ValueObject {
     Object.freeze(this);
   }
 
-  static create(value: ActivityEnumType): Either<ActivityTypeError, ActivityTypeValueObject> {
-    if (!this.hasValue(value)) {
-      return left(new FieldIsRequiredError('Tipo'));
-    }
-
-    if (!this.isValidValue(value)) {
-      return left(new InvalidFieldsValuesError('Tipo', KeysActivityEnumType));
+  static create(value: ActivityEnumType): Either<ActivityTypeError[], ActivityTypeValueObject> {
+    const errors = this.validate(value);
+    if (errors) {
+      return left(errors);
     }
     return right(new ActivityTypeValueObject(value));
+  }
+
+  private static validate(value: string): ActivityTypeError[] | null {
+    this.clearErrors();
+    if (!this.hasValue(value)) {
+      this.addError(new FieldIsRequiredError('Tipo'));
+    }
+    if (!this.isValidValue(value)) {
+      this.addError(new InvalidFieldsValuesError('Tipo', KeysActivityEnumType));
+    }
+    return this.errors();
   }
 
   private static hasValue(value: string): boolean {

@@ -1,6 +1,7 @@
+import { ValueObject } from '@/domain/entities/value-object';
 import { FieldIsRequiredError, InvalidFieldError } from '@/domain/shared/errors';
-import { ValueObject } from '@/shared/domain';
-import { Either, left, right } from '@/shared/either';
+import type { Either } from '@/shared/either';
+import { left, right } from '@/shared/either';
 
 type ErrorsEmailType = InvalidFieldError | FieldIsRequiredError;
 
@@ -10,14 +11,26 @@ export class EmailValueObject extends ValueObject {
     Object.freeze(this);
   }
 
-  static create(email: string): Either<ErrorsEmailType, EmailValueObject> {
+  static create(email: string): Either<ErrorsEmailType[], EmailValueObject> {
+    const errors = EmailValueObject.validate(email);
+
+    if (errors) {
+      return left(errors);
+    }
+
+    return right(new EmailValueObject(email));
+  }
+
+  private static validate(email: string): Error[] | null {
+    this.clearErrors();
+
     if (!this.hasEmail(email)) {
-      return left(new FieldIsRequiredError('Email'));
+      this.addError(new FieldIsRequiredError('Email'));
     }
     if (!this.isEmailValid(email)) {
-      return left(new InvalidFieldError('Email'));
+      this.addError(new InvalidFieldError('Email'));
     }
-    return right(new EmailValueObject(email));
+    return this.errors();
   }
 
   private static hasEmail(email: string): boolean {

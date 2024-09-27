@@ -15,12 +15,8 @@ class CustomSequencer extends Sequencer {
     const processLog = process.argv;
     if (processLog.includes('some_path_name')) console.log('teste');
 
-    copyTests.map(test => {
-      if (test.path.startsWith(currentPath)) {
-        console.log('Starts with __dirname: ', test.path.split(`${__dirname}\\src`)[1]);
-      }
-    });
-    return this.sortAlphabetic(tests);
+
+    return this.sortByTestType(tests);
   }
 
   /**
@@ -29,8 +25,12 @@ class CustomSequencer extends Sequencer {
    * @param {string[]} tests
    * @returns {string[]}
    */
-  sortAlphabetic(tests) {
-    return tests.sort((testA, testB) => (testA.path > testB.path ? 1 : -1));
+  sortByTestType(tests) {
+    const unitTests = tests.filter(test => test.path.includes('unit'));
+    const integrationTests = tests.filter(test => test.path.includes('integration'));
+    const e2eTests = tests.filter(test => test.path.includes('e2e'));
+
+    return [...unitTests, ...integrationTests, ...e2eTests];
   }
 }
 

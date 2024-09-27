@@ -1,7 +1,8 @@
 import { DateIsInThePastError, InvalidDateError } from '@/domain/entities/activity/errors';
+import { ValueObject } from '@/domain/entities/value-object';
 import { FieldIsRequiredError } from '@/domain/shared/errors';
-import { ValueObject } from '@/shared/domain';
-import { Either, left, right } from '@/shared/either';
+import type { Either } from '@/shared/either';
+import { left, right } from '@/shared/either';
 
 export type DatetimeErrorType = FieldIsRequiredError | InvalidDateError | DateIsInThePastError;
 
@@ -11,20 +12,27 @@ export class DatetimeValueObject extends ValueObject<Date> {
     Object.freeze(this);
   }
 
-  static create(value: Date): Either<DatetimeErrorType, DatetimeValueObject> {
-    if (!this.hasDatetime(value)) {
-      return left(new FieldIsRequiredError('Data e hora'));
-    }
-
-    if (!this.isDatetimeValid(value)) {
-      return left(new InvalidDateError());
-    }
-
-    if (!this.isDateInTheFuture(value)) {
-      return left(new DateIsInThePastError());
+  static create(value: Date): Either<DatetimeErrorType[], DatetimeValueObject> {
+    const errors = this.validate(value);
+    if (errors) {
+      return left(errors);
     }
 
     return right(new DatetimeValueObject(value));
+  }
+
+  private static validate(value: Date): DatetimeErrorType[] | null {
+    this.clearErrors();
+    if (!this.hasDatetime(value)) {
+      this.addError(new FieldIsRequiredError('Data e hora'));
+    }
+    if (!this.isDatetimeValid(value)) {
+      this.addError(new InvalidDateError());
+    }
+    if (value && !this.isDateInTheFuture(value)) {
+      this.addError(new DateIsInThePastError());
+    }
+    return this.errors();
   }
 
   private static hasDatetime(value: Date): boolean {

@@ -1,7 +1,8 @@
 import { InvalidFormatDescriptionError } from '@/domain/entities/activity/errors';
+import { ValueObject } from '@/domain/entities/value-object';
 import { FieldIsRequiredError } from '@/domain/shared/errors';
-import { ValueObject } from '@/shared/domain';
-import { Either, left, right } from '@/shared/either';
+import type { Either } from '@/shared/either';
+import { left, right } from '@/shared/either';
 
 type DescriptionError = FieldIsRequiredError | InvalidFormatDescriptionError;
 
@@ -11,18 +12,24 @@ export class DescriptionValueObject extends ValueObject {
     Object.freeze(this);
   }
 
-  static create(value: string): Either<DescriptionError, DescriptionValueObject> {
-    const valueTrim = value.trim();
-
-    if (!this.hasDescription(valueTrim)) {
-      return left(new FieldIsRequiredError('Descrição'));
+  static create(value: string): Either<DescriptionError[], DescriptionValueObject> {
+    const errors = this.validate(value);
+    if (errors) {
+      return left(errors);
     }
 
-    if (!this.hasCorrectDescriptionFormat(valueTrim)) {
-      return left(new InvalidFormatDescriptionError());
-    }
+    return right(new DescriptionValueObject(value.trim()));
+  }
 
-    return right(new DescriptionValueObject(valueTrim));
+  private static validate(value: string): DescriptionError[] | null {
+    this.clearErrors();
+    if (!this.hasDescription(value)) {
+      this.addError(new FieldIsRequiredError('Descrição'));
+    }
+    if (!this.hasCorrectDescriptionFormat(value)) {
+      this.addError(new InvalidFormatDescriptionError());
+    }
+    return this.errors();
   }
 
   private static hasDescription(description: string): boolean {
@@ -30,7 +37,7 @@ export class DescriptionValueObject extends ValueObject {
   }
 
   private static hasCorrectDescriptionFormat(description: string): boolean {
-    if (description.length < 10 || description.length > 500) {
+    if (!description || description.length < 10 || description.length > 500) {
       return false;
     }
     return true;

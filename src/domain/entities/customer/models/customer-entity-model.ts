@@ -1,8 +1,11 @@
-import { EmailValueObject, NameValueObject } from '@/domain/entities/customer/value-objects';
-import { IdValueObject } from '@/domain/shared/value-objects/id/id-value-object';
-
+import type {
+  AcceptTermsValueObject,
+  EmailValueObject,
+  NameValueObject,
+} from '@/domain/entities/customer/value-objects';
 export type CustomerEntityModel = {
-  id: IdValueObject;
+  id: string;
   name: NameValueObject;
   email: EmailValueObject;
+  acceptedTerms: AcceptTermsValueObject;
 };

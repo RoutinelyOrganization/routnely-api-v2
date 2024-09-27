@@ -1,6 +1,7 @@
 import { InvalidFormatTitleError } from '@/domain/entities/activity/errors';
-import { ValueObject } from '@/shared/domain';
-import { Either, left, right } from '@/shared/either';
+import { ValueObject } from '@/domain/entities/value-object';
+import type { Either } from '@/shared/either';
+import { left, right } from '@/shared/either';
 import { FieldIsRequiredError } from './../../../../shared/errors/field-is-required-error';
 
 type TitleError = FieldIsRequiredError | InvalidFormatTitleError;
@@ -11,18 +12,24 @@ export class TitleValueObject extends ValueObject {
     Object.freeze(this);
   }
 
-  static create(value: string): Either<TitleError, TitleValueObject> {
-    const valueTrim = value.trim();
-
-    if (!this.hasTitle(valueTrim)) {
-      return left(new FieldIsRequiredError('Título'));
+  static create(value: string): Either<TitleError[], TitleValueObject> {
+    const errors = this.validate(value);
+    if (errors) {
+      return left(errors);
     }
 
-    if (!this.hasCorrectTitleFormat(valueTrim)) {
-      return left(new InvalidFormatTitleError());
-    }
+    return right(new TitleValueObject(value.trim()));
+  }
 
-    return right(new TitleValueObject(valueTrim));
+  private static validate(value: string): TitleError[] | null {
+    this.clearErrors();
+    if (!this.hasTitle(value)) {
+      this.addError(new FieldIsRequiredError('Título'));
+    }
+    if (!this.hasCorrectTitleFormat(value)) {
+      this.addError(new InvalidFormatTitleError());
+    }
+    return this.errors();
   }
 
   private static hasTitle(title: string): boolean {
@@ -30,7 +37,7 @@ export class TitleValueObject extends ValueObject {
   }
 
   private static hasCorrectTitleFormat(title: string): boolean {
-    if (title.length < 3 || title.length > 50) {
+    if (!title || title.length < 3 || title.length > 50) {
       return false;
     }
 

@@ -1,4 +1,4 @@
-import { IdBuilder } from '@/usecases/contracts/id/id-builder';
+import type { IdBuilder } from '@/usecases/contracts/id/id-builder';
 import * as uuid from 'uuid';
 
 export class UuidAdapter implements IdBuilder {

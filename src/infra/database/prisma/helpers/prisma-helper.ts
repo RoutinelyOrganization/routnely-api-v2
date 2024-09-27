@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 export class PrismaHelper {
   private static prisma: null | PrismaClient;
 
-  static async connect(): Promise<void> {
+  private static async connect(): Promise<void> {
     if (!this.prisma) {
       this.prisma = new PrismaClient();
       await this.prisma.$connect();

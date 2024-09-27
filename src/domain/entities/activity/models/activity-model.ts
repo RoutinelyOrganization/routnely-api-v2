@@ -1,4 +1,8 @@
-import { ActivityEnumType, CategoriesEnumType, WeeklyFrequencyModel } from '@/domain/entities/activity/types';
+import type {
+  ActivityEnumType,
+  CategoriesEnumType,
+  WeeklyFrequencyModel,
+} from '@/domain/entities/activity/types';
 
 export type ActivityModel = {
   id: string;

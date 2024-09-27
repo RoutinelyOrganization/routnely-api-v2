@@ -1,36 +1,38 @@
 import { ServerError } from '@/presentation/errors';
-import type { HttpResponse } from '@/types/http';
+import type { ControllerResponseType } from '@/presentation/types';
 
-export const ok = (data: any): HttpResponse => ({
+type ObjectErrorType = { errors: string[] };
+
+export const ok = (data: any): ControllerResponseType => ({
   statusCode: 200,
   body: data,
 });
 
-export const noContent = (): HttpResponse => ({
+export const noContent = (): ControllerResponseType => ({
   statusCode: 204,
   body: null,
 });
 
-export const badRequest = (error: Error): HttpResponse => ({
+export const badRequest = (error: ObjectErrorType): ControllerResponseType => ({
   statusCode: 400,
   body: error,
 });
 
-export const unauthorized = (error: Error): HttpResponse => ({
+export const unauthorized = (error: ObjectErrorType): ControllerResponseType => ({
   statusCode: 401,
   body: error,
 });
 
-export const forbidden = (error: Error): HttpResponse => ({
+export const forbidden = (error: ObjectErrorType): ControllerResponseType => ({
   statusCode: 403,
   body: error,
 });
-export const notFound = (error: Error): HttpResponse => ({
+export const notFound = (error: ObjectErrorType): ControllerResponseType => ({
   statusCode: 404,
   body: error,
 });
 
-export const serverError = (error: Error): HttpResponse => ({
+export const serverError = (error: Error): ControllerResponseType => ({
   statusCode: 500,
   body: new ServerError(error.stack),
 });
