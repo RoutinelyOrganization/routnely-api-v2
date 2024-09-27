@@ -1,3 +1,5 @@
+// created from 'create-ts-index'
+
 export * from './field-is-invalid-error';
 export * from './field-is-required-error';
 export * from './invalid-array-instance-error';

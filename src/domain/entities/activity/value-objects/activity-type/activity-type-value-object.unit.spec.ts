@@ -1,5 +1,5 @@
+import { ActivityEnumType } from '@/domain/entities/activity/types';
 import { FieldIsRequiredError, InvalidFieldsValuesError } from '@/domain/errors';
-import { ActivityEnumType } from '../../types';
 import { ActivityTypeValueObject } from './activity-type-value-object';
 
 const KeysTypeActivity = Object.values(ActivityEnumType);

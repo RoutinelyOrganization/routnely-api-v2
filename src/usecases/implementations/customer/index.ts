@@ -1,1 +1,4 @@
-export * from './register/register-customer-usecase';
+// created from 'create-ts-index'
+
+export * from './register';
+export * from './tests';

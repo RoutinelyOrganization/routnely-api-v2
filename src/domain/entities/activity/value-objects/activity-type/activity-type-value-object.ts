@@ -1,8 +1,8 @@
-import type { ResultValueObject } from '@/domain/entities/value-object';
-import { ValueObject } from '@/domain/entities/value-object';
+import { ActivityEnumType } from '@/domain/entities/activity/types';
 import { FieldIsRequiredError, InvalidFieldsValuesError } from '@/domain/errors';
+import type { ResultValueObject } from '@/domain/value-objects/value-object';
+import { ValueObject } from '@/domain/value-objects/value-object';
 import { CustomError } from '@/shared/errors/custom-error';
-import { ActivityEnumType } from '../../types';
 
 const KeysActivityEnumType = Object.values(ActivityEnumType);
 

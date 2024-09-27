@@ -2,15 +2,15 @@ import type {
   ActivityEntityModel,
   ActivityModel,
   WeeklyFrequencyModel,
-} from '@/domain/entities/activity/types';
+} from '@/domain/entities/activity/models';
 import {
   ActivityTypeValueObject,
   CategoryValueObject,
-  DatetimeValueObject,
   DescriptionValueObject,
   TitleValueObject,
   WeeklyFrequencyValueObject,
 } from '@/domain/entities/activity/value-objects';
+import { DatetimeValueObject } from '@/domain/value-objects';
 import { CustomError } from '@/shared/errors/custom-error';
 import { Entity } from '../entity';
 

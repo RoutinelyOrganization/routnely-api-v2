@@ -1,20 +1,16 @@
+import type { CustomerEntityModel, CustomerModel } from '@/domain/entities/customer/models';
+import { AcceptTermsValueObject, NameValueObject } from '@/domain/entities/customer/value-objects';
 import { Entity } from '@/domain/entities/entity';
 import { CustomError } from '@/shared/errors/custom-error';
-import type { CustomerEntityModel, CustomerModel } from './models';
-import { AcceptTermsValueObject, EmailValueObject, NameValueObject } from './value-objects';
 
 export class CustomerEntity extends Entity<CustomerEntityModel> {
-  private constructor(protected props: CustomerEntityModel) {
+  protected constructor(protected props: CustomerEntityModel) {
     super(props);
     Object.freeze(this);
   }
 
   get name(): string {
     return this.props.name.value;
-  }
-
-  get email(): string {
-    return this.props.email.value;
   }
 
   get acceptedTerms(): boolean {
@@ -27,15 +23,14 @@ export class CustomerEntity extends Entity<CustomerEntityModel> {
     return new CustomerEntity(result);
   }
 
-  static validate({ id, name, email, acceptedTerms }: CustomerModel): CustomerEntityModel {
+  static validate({ id, name, acceptedTerms }: CustomerModel): CustomerEntityModel {
     this.clearErrors();
 
     const idOrError = this.validateId(id);
     const nameOrError = NameValueObject.create(name);
-    const emailOrError = EmailValueObject.create(email);
     const acceptedTermsOrError = AcceptTermsValueObject.create(acceptedTerms);
 
-    const responses = [idOrError, nameOrError, emailOrError, acceptedTermsOrError];
+    const responses = [idOrError, nameOrError, acceptedTermsOrError];
 
     for (const response of responses) {
       if (!response.isvalid) {
@@ -51,7 +46,6 @@ export class CustomerEntity extends Entity<CustomerEntityModel> {
     return {
       id: idOrError.result as string,
       name: nameOrError.result as NameValueObject,
-      email: emailOrError.result as EmailValueObject,
       acceptedTerms: acceptedTermsOrError.result as AcceptTermsValueObject,
     };
   }

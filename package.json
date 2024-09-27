@@ -13,24 +13,20 @@
     "docker:pg-test-run": "docker-compose -f ./docker/test/docker-compose.postgres.yml up -d",
     "docker:pg-test-kill": "docker-compose -f ./docker/test/docker-compose.postgres.yml stop",
     "docker:pg-test-rm": "docker-compose -f docker/test/docker-compose.postgres.yml down --volumes",
-
     "build": "nest build",
     "start": "nest start",
     "start:dev": "npm run prisma:push && nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/infra/api/main.js",
-    
     "prisma:seed": "npx prisma db seed",
     "prisma:push": "npx prisma db push",
     "prisma:generate": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:testMigrate": "dotenv -e .env.test -- npx prisma migrate dev",
     "prisma:testPush": "dotenv -e .env.test -- npx prisma db push",
-    
     "prepare": "husky install",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\" ",
-    
     "test": "dotenv -e .env.test -- jest -i",
     "test:ci": "dotenv -e .env.test -- jest -i --ci",
     "test:unit": "dotenv -e .env.test -- jest -i --config ./jest-unit-config.js",
@@ -38,7 +34,9 @@
     "test:e2e": "dotenv -e .env.test -- jest -i --config ./jest-e2e-config.js",
     "test:watch": "dotenv -e .env.test -- jest -i --watch",
     "test:cov": "dotenv -e .env.test -- jest -i --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "cti": "cti",
+    "cti:execute": "sh ./cti.sh"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -72,6 +70,7 @@
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "create-ts-index": "^1.14.0",
     "dotenv-cli": "^7.4.2",
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.0.0",

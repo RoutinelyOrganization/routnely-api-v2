@@ -1,15 +1,15 @@
-import type { WeeklyFrequencyModel } from '@/domain/entities/activity/types';
-import { WeekDaysEnumType } from '@/domain/entities/activity/types';
-import { DatetimeValueObject } from '@/domain/entities/activity/value-objects/datetime/datetime-value-object';
-import type { ResultValueObject } from '@/domain/entities/value-object';
-import { ValueObject } from '@/domain/entities/value-object';
+import { InvalidUniqueWeekdaysError } from '@/domain/entities/activity/errors';
+import type { WeeklyFrequencyModel } from '@/domain/entities/activity/models';
+import { WeekDaysEnumType } from '@/domain/entities/activity/models';
 import {
   InvalidArrayInstanceError,
   InvalidFieldPositiveNumberError,
   InvalidFieldsValuesError,
 } from '@/domain/errors';
+import { DatetimeValueObject } from '@/domain/value-objects/datetime/datetime-value-object';
+import type { ResultValueObject } from '@/domain/value-objects/value-object';
+import { ValueObject } from '@/domain/value-objects/value-object';
 import { CustomError } from '@/shared/errors/custom-error';
-import { InvalidUniqueWeekdaysError } from '../../errors';
 
 const keysWeekDays = Object.values(WeekDaysEnumType);
 

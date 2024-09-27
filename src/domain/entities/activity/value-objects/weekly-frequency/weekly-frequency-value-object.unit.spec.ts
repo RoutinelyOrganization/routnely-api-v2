@@ -3,8 +3,8 @@ import {
   InvalidDateError,
   InvalidUniqueWeekdaysError,
 } from '@/domain/entities/activity/errors';
-import type { WeeklyFrequencyModel } from '@/domain/entities/activity/types';
-import { WeekDaysEnumType } from '@/domain/entities/activity/types';
+import type { WeeklyFrequencyModel } from '@/domain/entities/activity/models/weekly-frequency-model';
+import { WeekDaysEnumType } from '@/domain/entities/activity/models/weekly-frequency-model';
 import {
   InvalidArrayInstanceError,
   InvalidFieldPositiveNumberError,

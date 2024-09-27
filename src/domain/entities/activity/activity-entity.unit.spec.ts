@@ -1,11 +1,8 @@
-import type { ActivityModel } from '@/domain/entities/activity/types';
-import {
-  ActivityEnumType,
-  CategoriesEnumType,
-  WeekDaysEnumType,
-} from '@/domain/entities/activity/types';
+import { ActivityEntity } from '@/domain/entities/activity/activity-entity';
+import type { ActivityModel } from '@/domain/entities/activity/models/activity-model';
+import { WeekDaysEnumType } from '@/domain/entities/activity/models/weekly-frequency-model';
+import { ActivityEnumType, CategoriesEnumType } from '@/domain/entities/activity/types';
 import { CustomError } from '@/shared/errors/custom-error';
-import { ActivityEntity } from './activity-entity';
 
 const now = new Date();
 const futureDate = new Date(now);

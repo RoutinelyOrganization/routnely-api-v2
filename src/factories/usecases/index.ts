@@ -1,1 +1,3 @@
-export * from './customer/register-customer-factory';
+// created from 'create-ts-index'
+
+export * from './customer';

@@ -1,5 +1,4 @@
-export * from '../models/activity-entity-model';
-export * from '../models/activity-model';
-export * from '../models/weekly-frequency-model';
+// created from 'create-ts-index'
+
 export * from './activity-enum-type';
 export * from './categories-type';

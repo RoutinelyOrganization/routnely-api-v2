@@ -7,9 +7,11 @@ export type ResultValueId =
   | { isvalid: true; result: string }
   | { isvalid: false; result: CustomError };
 
-type Props = { id: string } & Record<string, any>;
+type Obj = Record<string, any>;
 
-export abstract class Entity<T extends Props> {
+type Props = { id: string } & Obj;
+
+export abstract class Entity<T extends Props = Props> {
   private static _errors: CustomErrorAbstract[] = [];
   protected readonly _id: string;
 
@@ -49,5 +51,9 @@ export abstract class Entity<T extends Props> {
 
   protected static clearErrors(): void {
     this._errors = [];
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static create(props: Obj): Entity<Props> {
+    throw new Error('Method not implemented.');
   }
 }
