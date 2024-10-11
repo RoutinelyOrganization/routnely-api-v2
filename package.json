@@ -15,7 +15,7 @@
     "docker:pg-test-rm": "docker-compose -f docker/test/docker-compose.postgres.yml down --volumes",
     "build": "nest build",
     "start": "nest start",
-    "start:dev": "npm run prisma:push && nest start --watch",
+    "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/infra/api/main.js",
     "prisma:seed": "npx prisma db seed",
