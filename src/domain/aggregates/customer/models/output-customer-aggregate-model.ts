@@ -1,6 +1,6 @@
 import type { AccountEntity } from '@/domain/entities/account';
 
-export type CustomerAggregateModel = {
+export type OutputCustomerAggregateModel = {
   id: string;
   name: string;
   acceptedTerms: boolean;

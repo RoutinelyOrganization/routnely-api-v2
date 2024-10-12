@@ -1,21 +1,21 @@
 import type {
-  ActivityEntityModel,
-  ActivityModel,
+  InputActivityEntityModel,
+  OutputActivityEntityModel,
   WeeklyFrequencyModel,
-} from '@/domain/entities/activity/models';
+} from '@/domain/entities/activity';
 import {
   ActivityTypeValueObject,
   CategoryValueObject,
   DescriptionValueObject,
   TitleValueObject,
   WeeklyFrequencyValueObject,
-} from '@/domain/entities/activity/value-objects';
+} from '@/domain/entities/activity';
 import { DatetimeValueObject } from '@/domain/value-objects';
 import { CustomError } from '@/shared/errors/custom-error';
 import { Entity } from '../entity';
 
-export class ActivityEntity extends Entity<ActivityEntityModel> {
-  private constructor(protected props: ActivityEntityModel) {
+export class ActivityEntity extends Entity<OutputActivityEntityModel> {
+  private constructor(protected props: OutputActivityEntityModel) {
     super(props);
     Object.freeze(this);
   }
@@ -48,13 +48,13 @@ export class ActivityEntity extends Entity<ActivityEntityModel> {
     return this.props.weeklyFrequency?.value;
   }
 
-  static create(props: ActivityModel): ActivityEntity {
+  static create(props: InputActivityEntityModel): ActivityEntity {
     const result = this.validate(props);
 
     return new ActivityEntity(result);
   }
 
-  private static validate(props: ActivityModel): ActivityEntityModel {
+  private static validate(props: InputActivityEntityModel): OutputActivityEntityModel {
     const { id, customerId, title, description, executeDateTime, type, category, weeklyFrequency } =
       props;
 

@@ -1,4 +1,4 @@
-import { InvalidNameError } from '@/domain/entities/customer/errors';
+import { InvalidNameError } from '@/domain/entities/customer';
 import { FieldIsRequiredError } from '@/domain/errors';
 import { NameValueObject } from './name-value-object';
 

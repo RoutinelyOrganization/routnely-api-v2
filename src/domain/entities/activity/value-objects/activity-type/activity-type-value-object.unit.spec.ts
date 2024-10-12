@@ -1,4 +1,4 @@
-import { ActivityEnumType } from '@/domain/entities/activity/types';
+import { ActivityEnumType } from '@/domain/entities/activity';
 import { FieldIsRequiredError, InvalidFieldsValuesError } from '@/domain/errors';
 import { ActivityTypeValueObject } from './activity-type-value-object';
 

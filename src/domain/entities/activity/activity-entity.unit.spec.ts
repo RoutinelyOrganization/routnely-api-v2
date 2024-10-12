@@ -1,14 +1,17 @@
-import { ActivityEntity } from '@/domain/entities/activity/activity-entity';
-import type { ActivityModel } from '@/domain/entities/activity/models/activity-model';
-import { WeekDaysEnumType } from '@/domain/entities/activity/models/weekly-frequency-model';
-import { ActivityEnumType, CategoriesEnumType } from '@/domain/entities/activity/types';
+import type { InputActivityEntityModel } from '@/domain/entities/activity';
+import {
+  ActivityEntity,
+  ActivityEnumType,
+  CategoriesEnumType,
+  WeekDaysEnumType,
+} from '@/domain/entities/activity';
 import { CustomError } from '@/shared/errors/custom-error';
 
 const now = new Date();
 const futureDate = new Date(now);
 futureDate.setDate(now.getDate() + 10);
 
-const activityData: ActivityModel = {
+const activityData: InputActivityEntityModel = {
   id: '550e8400-e29b-41d4-a716-446655440000',
   customerId: '550e8400-e29b-41d4-a716-446655440000',
   title: 'Activity',

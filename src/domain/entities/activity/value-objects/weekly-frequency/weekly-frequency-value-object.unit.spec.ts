@@ -1,4 +1,4 @@
-import { InvalidUniqueWeekdaysError } from '@/domain/entities/activity/errors';
+import { InvalidUniqueWeekdaysError } from '@/domain/entities/activity';
 import type { WeeklyFrequencyModel } from '@/domain/entities/activity/models/weekly-frequency-model';
 import { WeekDaysEnumType } from '@/domain/entities/activity/models/weekly-frequency-model';
 import {

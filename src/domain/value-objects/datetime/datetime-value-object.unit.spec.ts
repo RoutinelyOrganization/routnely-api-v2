@@ -1,4 +1,4 @@
-import { InvalidDateError } from '@/domain/entities/activity/errors';
+import { InvalidDateError } from '@/domain/entities/activity';
 import { FieldIsRequiredError } from '@/domain/errors';
 import { DatetimeValueObject } from './datetime-value-object';
 

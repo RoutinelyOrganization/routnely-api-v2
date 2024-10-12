@@ -1,4 +1,4 @@
-export type AccountModel = {
+export type InputAccountEntityModel = {
   id?: string;
   email: string;
   password: string;

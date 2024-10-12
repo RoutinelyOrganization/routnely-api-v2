@@ -1,4 +1,4 @@
-import { CategoriesEnumType } from '@/domain/entities/activity/types';
+import { CategoriesEnumType } from '@/domain/entities/activity';
 import { FieldIsRequiredError, InvalidFieldsValuesError } from '@/domain/errors';
 import { CategoryValueObject } from './category-value-object';
 

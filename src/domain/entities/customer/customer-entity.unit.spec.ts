@@ -11,12 +11,10 @@ describe('Customer Entity', () => {
     const customer = CustomerEntity.create(dataCustomer);
 
     expect(customer).toBeInstanceOf(CustomerEntity);
-
     const { id, name, acceptedTerms } = customer;
 
     expect(id).toBeTruthy();
     expect(name).toEqual(dataCustomer.name);
-
     expect(acceptedTerms).toEqual(dataCustomer.acceptedTerms);
   });
 

@@ -1,11 +1,14 @@
 import { Aggregate } from '@/domain/aggregates/aggregate';
-import type { CustomerAggregateModel, CustomerModel } from '@/domain/aggregates/customer/models';
+import type {
+  InputCustomerAggregateModel,
+  OutputCustomerAggregateModel,
+} from '@/domain/aggregates/customer';
 import { AccountEntity } from '@/domain/entities/account/account-entity';
 import { CustomerEntity } from '@/domain/entities/customer';
 import { CustomError } from '@/shared/errors';
 
-export class CustomerAggregate extends Aggregate<CustomerAggregateModel> {
-  private constructor(props: CustomerAggregateModel) {
+export class CustomerAggregate extends Aggregate<OutputCustomerAggregateModel> {
+  private constructor(props: OutputCustomerAggregateModel) {
     super(props);
   }
 
@@ -21,12 +24,12 @@ export class CustomerAggregate extends Aggregate<CustomerAggregateModel> {
     return this.props.account;
   }
 
-  static create(data: CustomerModel): CustomerAggregate {
+  static create(data: InputCustomerAggregateModel): CustomerAggregate {
     const result = this.validate(data);
     return new CustomerAggregate(result);
   }
 
-  private static validate(data: CustomerModel): CustomerAggregateModel {
+  private static validate(data: InputCustomerAggregateModel): OutputCustomerAggregateModel {
     this.clearErrors();
 
     const customer = {

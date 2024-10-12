@@ -1,4 +1,4 @@
-import { AcceptedTermsError } from '@/domain/entities/customer/errors';
+import { AcceptedTermsError } from '@/domain/entities/customer';
 import type { ResultValueObject } from '@/domain/value-objects/value-object';
 import { ValueObject } from '@/domain/value-objects/value-object';
 import { CustomError } from '@/shared/errors/custom-error';

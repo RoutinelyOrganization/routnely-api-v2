@@ -1,4 +1,3 @@
-// created from 'create-ts-index'
-
-export * from './datetime';
+export * from './datetime/datetime-value-object';
 export * from './value-object';
+

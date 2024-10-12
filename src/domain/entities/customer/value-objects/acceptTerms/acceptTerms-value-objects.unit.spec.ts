@@ -1,4 +1,4 @@
-import { AcceptedTermsError } from '@/domain/entities/customer/errors';
+import { AcceptedTermsError } from '@/domain/entities/customer';
 import { AcceptTermsValueObject } from './acceptTerms-value-objects';
 
 describe('AcceptTerms Value Objects', () => {

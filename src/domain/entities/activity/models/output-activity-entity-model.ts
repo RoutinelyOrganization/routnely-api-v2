@@ -1,13 +1,13 @@
 import type {
   ActivityTypeValueObject,
   CategoryValueObject,
-  DatetimeValueObject,
   DescriptionValueObject,
   TitleValueObject,
   WeeklyFrequencyValueObject,
-} from '@/domain/entities/activity/value-objects';
+} from '@/domain/entities/activity';
+import type { DatetimeValueObject } from '@/domain/value-objects';
 
-export type ActivityEntityModel = {
+export type OutputActivityEntityModel = {
   id: string;
   customerId: string;
   title: TitleValueObject;

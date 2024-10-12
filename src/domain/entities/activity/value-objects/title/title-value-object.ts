@@ -1,4 +1,4 @@
-import { InvalidFormatTitleError } from '@/domain/entities/activity/errors';
+import { InvalidFormatTitleError } from '@/domain/entities/activity';
 import type { ResultValueObject } from '@/domain/value-objects/value-object';
 import { ValueObject } from '@/domain/value-objects/value-object';
 import { CustomError } from '@/shared/errors/custom-error';

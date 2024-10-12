@@ -1,10 +1,13 @@
-import type { CustomerEntityModel, CustomerModel } from '@/domain/entities/customer/models';
-import { AcceptTermsValueObject, NameValueObject } from '@/domain/entities/customer/value-objects';
+import type {
+  InputCustomerEntityModel,
+  OutputCustomerEntityModel,
+} from '@/domain/entities/customer';
+import { AcceptTermsValueObject, NameValueObject } from '@/domain/entities/customer';
 import { Entity } from '@/domain/entities/entity';
 import { CustomError } from '@/shared/errors/custom-error';
 
-export class CustomerEntity extends Entity<CustomerEntityModel> {
-  protected constructor(protected props: CustomerEntityModel) {
+export class CustomerEntity extends Entity<OutputCustomerEntityModel> {
+  protected constructor(protected props: OutputCustomerEntityModel) {
     super(props);
     Object.freeze(this);
   }
@@ -17,13 +20,17 @@ export class CustomerEntity extends Entity<CustomerEntityModel> {
     return this.props.acceptedTerms.value;
   }
 
-  static create(data: CustomerModel): CustomerEntity {
+  static create(data: InputCustomerEntityModel): CustomerEntity {
     const result = this.validate(data);
 
     return new CustomerEntity(result);
   }
 
-  static validate({ id, name, acceptedTerms }: CustomerModel): CustomerEntityModel {
+  static validate({
+    id,
+    name,
+    acceptedTerms,
+  }: InputCustomerEntityModel): OutputCustomerEntityModel {
     this.clearErrors();
 
     const idOrError = this.validateId(id);

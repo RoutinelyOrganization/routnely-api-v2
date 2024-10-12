@@ -1,13 +1,13 @@
 import { Entity } from '@/domain/entities';
-import { InvalidPasswordError } from '@/domain/entities/account/errors';
-import type { AccountEntityModel, AccountModel } from '@/domain/entities/account/models';
-import { EmailValueObject } from '@/domain/entities/account/value-objects';
+import type { InputAccountEntityModel, OutputAccountEntityModel } from '@/domain/entities/account';
+import { EmailValueObject, InvalidPasswordError } from '@/domain/entities/account';
+
 import { InvalidFieldError } from '@/domain/errors';
 import { DatetimeValueObject } from '@/domain/value-objects';
 import { CustomError } from '@/shared';
 
-export class AccountEntity extends Entity<AccountEntityModel> {
-  protected constructor(protected props: AccountEntityModel) {
+export class AccountEntity extends Entity<OutputAccountEntityModel> {
+  protected constructor(protected props: OutputAccountEntityModel) {
     super(props);
   }
 
@@ -27,13 +27,13 @@ export class AccountEntity extends Entity<AccountEntityModel> {
     return this.props.acceptedAt?.value || null;
   }
 
-  static create(data: AccountModel): AccountEntity {
+  static create(data: InputAccountEntityModel): AccountEntity {
     const result = this.validate(data);
 
     return new AccountEntity(result);
   }
 
-  private static validate(data: AccountModel): AccountEntityModel {
+  private static validate(data: InputAccountEntityModel): OutputAccountEntityModel {
     this.clearErrors();
     const { id, email, password, isVerified, acceptedAt } = data;
 

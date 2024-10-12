@@ -1,4 +1,4 @@
-import { InvalidFormatDescriptionError } from '@/domain/entities/activity/errors';
+import { InvalidFormatDescriptionError } from '@/domain/entities/activity';
 import { FieldIsRequiredError } from '@/domain/errors';
 import type { ResultValueObject } from '@/domain/value-objects/value-object';
 import { ValueObject } from '@/domain/value-objects/value-object';

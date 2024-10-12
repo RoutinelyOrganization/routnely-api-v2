@@ -1,4 +1,4 @@
-import { InvalidFormatTitleError } from '@/domain/entities/activity/errors';
+import { InvalidFormatTitleError } from '@/domain/entities/activity';
 import { FieldIsRequiredError } from '@/domain/errors';
 import { TitleValueObject } from './title-value-object';
 

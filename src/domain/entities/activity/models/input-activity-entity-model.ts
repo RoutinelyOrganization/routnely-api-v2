@@ -2,9 +2,9 @@ import type {
   ActivityEnumType,
   CategoriesEnumType,
   WeeklyFrequencyModel,
-} from '@/domain/entities/activity/types';
+} from '@/domain/entities/activity';
 
-export type ActivityModel = {
+export type InputActivityEntityModel = {
   id: string;
   customerId: string;
   title: string;
