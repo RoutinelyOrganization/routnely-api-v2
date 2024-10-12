@@ -1,4 +1,3 @@
-// created from 'create-ts-index'
-
-export * from './customer';
 export * from './contract-domain';
+export * from './customer/register-customer-contract-domain';
+
