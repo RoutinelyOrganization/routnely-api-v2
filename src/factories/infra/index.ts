@@ -1,4 +1,3 @@
-// created from 'create-ts-index'
+export * from './criptography/criptography-factory';
+export * from './database/customer/customer-repository-factory';
 
-export * from './criptography';
-export * from './database';
