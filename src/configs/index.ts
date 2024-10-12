@@ -1,5 +1,6 @@
 // created from 'create-ts-index'
 
-export * from './cors';
-export * from './throttler';
+export * from './cors/cors-setup';
 export * from './env';
+export * from './throttler/throttler-setup';
+

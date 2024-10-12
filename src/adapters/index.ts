@@ -1,3 +1,3 @@
 // created from 'create-ts-index'
 
-export * from './nest';
+export * from './nest/nest-router-adapter';
