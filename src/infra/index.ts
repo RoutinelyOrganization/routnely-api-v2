@@ -1,7 +1,5 @@
-// created from 'create-ts-index'
-
 export * from './api';
-export * from './cryptography';
+export * from './cryptography/criptography-infra';
 export * from './database';
 export * from './id';
 export * from './validators';

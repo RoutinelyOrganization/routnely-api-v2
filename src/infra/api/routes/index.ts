@@ -1,4 +1,2 @@
-// created from 'create-ts-index'
-
-export * from './config';
+export * from './config/supertest';
 export * from './customer';
