@@ -5,7 +5,7 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { RegisterCustomerRoutesDto } from './dtos/register-customer.dto';
 
-@ApiTags('User')
+@ApiTags('Customer')
 @Controller('/user')
 export class RegisterCustomerRoute {
   @Post()
