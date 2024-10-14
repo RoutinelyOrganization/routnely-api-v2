@@ -1,6 +1,6 @@
 import { CustomerAggregate } from '@/domain/aggregates/customer';
 import { makeCryptography, makeCustomerRepository } from '@/factories';
-import { PrismaHelper } from '@/infra/database/prisma/helpers';
+import { PrismaHelper } from '@/infra/database/prisma';
 import { CustomError } from '@/shared/errors/custom-error';
 import { data } from '@/usecases/implementations/customer/tests/mocks/stubs-register-custumer';
 import { RegisterCustomerUsecase } from '../../register/register-customer-usecase';

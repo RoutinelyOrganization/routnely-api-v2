@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { CustomerAggregate } from '@/domain/aggregates/customer';
-import type { CustomerRepositoryContractsUsecase } from '@/usecases/contracts/database';
+import type { CustomerRepositoryContractsUsecase } from '@/usecases/contracts';
 
 const dataCustomerRepo = {
   name: 'any name',

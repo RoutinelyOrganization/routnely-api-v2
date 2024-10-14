@@ -1,8 +1,8 @@
-import type { CustomerModel } from '@/domain/aggregates/customer/models';
+import type { InputCustomerAggregateModel } from '@/domain/aggregates/customer';
 import type { ContractDomain } from '@/domain/contracts/contract-domain';
 
 export type InputRegisterCustomerDto = Omit<
-  CustomerModel,
+  InputCustomerAggregateModel,
   'id' | 'idAccount' | 'isVerified' | 'acceptedAt'
 >;
 

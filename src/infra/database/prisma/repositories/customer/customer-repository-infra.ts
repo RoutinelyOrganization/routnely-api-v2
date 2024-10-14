@@ -1,7 +1,9 @@
 import { CustomerAggregate } from '@/domain/aggregates/customer';
 import { PrismaHelper } from '@/infra/database/prisma/helpers/prisma-helper';
-import type { CriptographyContractUsecase } from '@/usecases/contracts/cryptography';
-import type { CustomerRepositoryContractsUsecase } from '@/usecases/contracts/database';
+import type {
+  CriptographyContractUsecase,
+  CustomerRepositoryContractsUsecase,
+} from '@/usecases/contracts';
 import type { PrismaClient } from '@prisma/client';
 
 export class CustomerRepository implements CustomerRepositoryContractsUsecase {

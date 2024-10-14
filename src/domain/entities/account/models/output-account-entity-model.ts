@@ -1,4 +1,4 @@
-import type { EmailValueObject } from '@/domain/entities/account/value-objects';
+import type { EmailValueObject } from '@/domain/entities/account';
 import type { DatetimeValueObject } from '@/domain/value-objects';
 
 export type OutputAccountEntityModel = {

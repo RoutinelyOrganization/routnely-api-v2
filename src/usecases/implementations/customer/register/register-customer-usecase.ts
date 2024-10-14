@@ -6,7 +6,7 @@ import type {
 } from '@/domain/contracts';
 import { ConflitError } from '@/shared/errors/conflit-error';
 import { CustomError } from '@/shared/errors/custom-error';
-import type { CustomerRepositoryContractsUsecase } from '@/usecases/contracts/database';
+import type { CustomerRepositoryContractsUsecase } from '@/usecases/contracts';
 
 export class RegisterCustomerUsecase implements RegisterCustomerContractDomain {
   constructor(private repository: CustomerRepositoryContractsUsecase) {}

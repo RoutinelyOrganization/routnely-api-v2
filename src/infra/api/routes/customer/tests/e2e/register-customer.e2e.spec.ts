@@ -1,6 +1,6 @@
-import { makeCryptography } from '@/factories/infra/criptography';
+import { makeCryptography } from '@/factories/infra';
 import { testeServer } from '@/infra/api/routes/config/supertest';
-import { PrismaHelper } from '@/infra/database/prisma/helpers';
+import { PrismaHelper } from '@/infra/database/prisma';
 
 beforeEach(async () => {
   const prisma = await PrismaHelper.getPrisma();

@@ -34,9 +34,7 @@
     "test:e2e": "dotenv -e .env.test -- jest -i --config ./jest-e2e-config.js",
     "test:watch": "dotenv -e .env.test -- jest -i --watch",
     "test:cov": "dotenv -e .env.test -- jest -i --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "cti": "cti",
-    "cti:execute": "sh ./cti.sh"
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

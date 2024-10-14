@@ -4,9 +4,7 @@ import { UuidAdapter } from '@/infra/id/uuid-adapter/uuid-adapter';
 import type { CustomErrorAbstract } from '@/shared/errors/custom-error';
 import { CustomError } from '@/shared/errors/custom-error';
 
-export type ResultValueId =
-  | { isvalid: true; result: string }
-  | { isvalid: false; result: CustomError };
+type ResultValueId = { isvalid: true; result: string } | { isvalid: false; result: CustomError };
 
 type Props = { id: string } & Record<string, any>;
 

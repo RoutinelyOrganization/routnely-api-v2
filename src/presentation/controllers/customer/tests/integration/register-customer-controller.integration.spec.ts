@@ -1,5 +1,5 @@
 import { makeCryptography, makeRegisterCustomerUsecase } from '@/factories';
-import { PrismaHelper } from '@/infra/database/prisma/helpers';
+import { PrismaHelper } from '@/infra/database/prisma';
 import { RegisterCustomerValidator } from '@/infra/validators';
 import { RegisterCustomerController } from '@/presentation/controllers';
 import { serverError } from '@/presentation/helpers/http-helpers';

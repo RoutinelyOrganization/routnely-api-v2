@@ -1,6 +1,6 @@
 import { CustomerAggregate } from '@/domain/aggregates/customer';
 import { makeCryptography } from '@/factories';
-import { PrismaHelper } from '@/infra/database/prisma/helpers';
+import { PrismaHelper } from '@/infra/database/prisma';
 import { CustomerRepository } from '@/infra/database/prisma/repositories/customer/customer-repository-infra';
 import { makeCustomerRepository } from '@/infra/database/prisma/repositories/tests/mock/customer/customer-repository-stub';
 
