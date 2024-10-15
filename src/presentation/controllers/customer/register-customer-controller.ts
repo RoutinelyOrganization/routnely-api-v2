@@ -23,6 +23,8 @@ export class RegisterCustomerController
 
       return noContent();
     } catch (error) {
+      console.log('error', error);
+
       return this.returnError(error as any);
     }
   }

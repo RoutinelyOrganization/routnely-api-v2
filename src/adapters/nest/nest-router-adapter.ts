@@ -15,6 +15,7 @@ export class NestRouterAdapter {
     };
 
     const response = await this.controller.handle(request);
+    console.log('adapter', response);
 
     const presenterFormat = Presenter.execute(response.body, req.headers['accept']);
 

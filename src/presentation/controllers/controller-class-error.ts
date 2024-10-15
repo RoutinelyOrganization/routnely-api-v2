@@ -19,6 +19,8 @@ export abstract class ControllerError {
 
   private switchHelpers(error: CustomError): ControllerResponseType {
     const { codeError, messages: errors } = error.formatErrors;
+    console.log('codeError', codeError);
+
     switch (codeError) {
       case 400:
         return badRequest({ errors });
