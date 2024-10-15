@@ -17,6 +17,7 @@ export class RegisterCustomerController
   async handle(request: ControllerRequestType): Promise<ControllerResponseType> {
     try {
       this.validator.validate(request.body);
+      console.log(request.body);
 
       await this.usecase.perform(request.body);
 
