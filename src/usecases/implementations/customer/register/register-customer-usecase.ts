@@ -21,6 +21,8 @@ export class RegisterCustomerUsecase implements RegisterCustomerContractDomain {
 
     await this.repository.create(aggregate);
 
+    DomainEventBus.emit('customer_registered', data.email);
+
     return;
   }
 }
