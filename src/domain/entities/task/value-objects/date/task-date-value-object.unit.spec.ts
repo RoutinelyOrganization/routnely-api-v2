@@ -12,10 +12,10 @@ describe('TaskDateValueObject Unit test', () => {
   });
 
   it('Should return success if date is correct', () => {
-    const date = TaskDateValueObject.create('10/08/2025');
+    const date = TaskDateValueObject.create('10/11/2028');
     expect(date.isvalid).toBeTruthy();
     expect(date.result).toBeInstanceOf(TaskDateValueObject);
-    expect(date.result).toEqual({ props: '10/08/2025' });
+    expect(date.result).toEqual({ props: '10/11/2028' });
   });
 
   it('Should return error if date is in the past', () => {
@@ -59,13 +59,13 @@ describe('TaskDateValueObject Unit test', () => {
 
     it('Should create TaskFinallyDateValueObject if final date is equal to initial date', () => {
       const finallyDate = TaskFinallyDateValueObject.create({
-        initialDate: TaskDateValueObject.create('11/08/2025').result as TaskDateValueObject,
-        finallyDate: '11/08/2025',
+        initialDate: TaskDateValueObject.create('11/08/2028').result as TaskDateValueObject,
+        finallyDate: '11/08/2028',
       });
       expect(finallyDate.isvalid).toBeTruthy();
       expect(finallyDate.result).toBeInstanceOf(TaskFinallyDateValueObject);
       expect(finallyDate.result).toEqual({
-        props: '11/08/2025',
+        props: '11/08/2028',
       });
     });
   });

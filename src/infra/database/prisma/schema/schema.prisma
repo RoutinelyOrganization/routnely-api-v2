@@ -10,10 +10,10 @@ datasource db {
 model Customer {
   id            String   @id @default(uuid())
   name          String
-  acceptedTerms Boolean
   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
   createdAt     DateTime @default(now()) @map("created_at")
   accountId     String   @unique @map("account_id")
+  acceptedTerms Boolean
   account       Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
   @@map("customer")
@@ -44,9 +44,9 @@ model Task {
   type        TaskType
   weekDays    DaysOfWeek[]
   accountId   String         @map("account_id")
-  account     Account        @relation(fields: [accountId], references: [id])
   updatedAt   DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
   createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  account     Account        @relation(fields: [accountId], references: [id])
 
   @@map("tasks")
 }
