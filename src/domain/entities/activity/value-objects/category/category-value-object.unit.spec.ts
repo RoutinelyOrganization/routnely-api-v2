@@ -4,6 +4,7 @@ import { CategoryValueObject } from './category-value-object';
 
 const KeysCategories = Object.values(CategoriesEnumType);
 
+// eslint-disable-line no-console
 describe('Category Value Object', () => {
   it('Should return error if received empty value', () => {
     const activity = CategoryValueObject.create('' as any);
@@ -25,7 +26,6 @@ describe('Category Value Object', () => {
 
   it('Should correct category ', () => {
     const activity = CategoryValueObject.create(CategoriesEnumType.career);
-
     expect(activity.result).toEqual({ props: CategoriesEnumType.career });
   });
 });

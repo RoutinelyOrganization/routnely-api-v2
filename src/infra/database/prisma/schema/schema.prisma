@@ -28,6 +28,58 @@ model Account {
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @updatedAt @map("updated_at")
   customer   Customer?
+  Task       Task[]
 
   @@map("accounts")
+}
+
+model Task {
+  id          String         @id @default(uuid())
+  name        String
+  date        DateTime
+  description String
+  checked     Boolean        @default(false)
+  finallyDate DateTime?
+  category    TaskCategories
+  type        TaskType
+  weekDays    DaysOfWeek[]
+  accountId   String         @map("account_id")
+  account     Account        @relation(fields: [accountId], references: [id])
+  updatedAt   DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
+  createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  @@map("tasks")
+}
+
+enum TaskCategories {
+  Career
+  Finance
+  Studies
+  Health
+  Leisure
+  Productivity
+  Several
+}
+
+enum TaskType {
+  habit
+  task
+}
+
+enum TaskTags {
+  application
+  account
+  exercise
+  beauty
+  literature
+}
+
+enum DaysOfWeek {
+  Monday
+  Tuesday
+  Wednesday
+  Thursday
+  Friday
+  Saturday
+  Sunday
 }
